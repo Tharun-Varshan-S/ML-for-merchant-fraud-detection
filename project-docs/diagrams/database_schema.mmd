@@ -1,0 +1,19 @@
+erDiagram
+    AUDIT_LOG {
+        INTEGER id PK "Auto-increment primary key"
+        VARCHAR request_id "UUID4 request tracker (Indexed)"
+        VARCHAR transaction_id "Transaction identifier (Indexed)"
+        VARCHAR model_version "Model identifier (lgbm_v1)"
+        FLOAT fraud_probability "Model probability [0.0 - 1.0]"
+        FLOAT threshold "Frozen operating threshold (0.40)"
+        INTEGER risk_score "Deterministic score [0 - 100]"
+        VARCHAR risk_category "Display tier (LOW/MED/HIGH/CRIT)"
+        VARCHAR action "Bounded action recommendation"
+        VARCHAR policy_rule_id "Rule that fired in policy cascade"
+        TEXT policy_reason "Documented regulatory/business justification"
+        VARCHAR decision_timestamp "ISO-8601 decision timestamp"
+        TEXT top_reasons_json "Separated SHAP explanation payload (JSON)"
+        VARCHAR source "Origin tag ('demo' or 'manual')"
+        INTEGER prior_transaction_count "V2 historical context count"
+        DATETIME created_at "Row creation timestamp (UTC)"
+    }

@@ -1,0 +1,10 @@
+flowchart TD
+    Start([Evaluate Policy]) --> R1{p &ge; 0.80?}
+    R1 -- Yes --> A1["CRITICAL_BLOCK<br/>Action: <b>BLOCK</b>"]
+    R1 -- No --> R2{p &ge; 0.40?}
+    R2 -- Yes --> A2["HIGH_STEP_UP<br/>Action: <b>STEP_UP_VERIFICATION</b>"]
+    R2 -- No --> R3{p &ge; 0.15 AND<br/>Amount &ge; ₹25,000?}
+    R3 -- Yes --> A3["MEDIUM_AMOUNT_ESCALATION<br/>Action: <b>STEP_UP_VERIFICATION</b>"]
+    R3 -- No --> R4{p &ge; 0.15?}
+    R4 -- Yes --> A4["MEDIUM_MONITOR<br/>Action: <b>ALLOW_WITH_MONITORING</b>"]
+    R4 -- No --> A5["LOW_ALLOW (Catch-all)<br/>Action: <b>ALLOW</b>"]

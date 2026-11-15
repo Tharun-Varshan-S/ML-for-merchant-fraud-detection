@@ -1,0 +1,42 @@
+flowchart TD
+    subgraph Client ["Client / Presentation Tier"]
+        UI["React 19 + Vite Dashboard<br/><code>frontend/src/App.jsx</code>"]
+        Scenarios["Demo Scenarios / Manual Form<br/><code>sampleScenarios.js</code>"]
+        UI --- Scenarios
+    end
+
+    subgraph API_Gateway ["API & Routing Tier (FastAPI)"]
+        Routes["API Endpoints<br/><code>backend/api/routes.py</code><br/>(/health, /model/info, /risk/evaluate)"]
+        Validation["Request Validation<br/><code>backend/schemas/transaction.py</code><br/>(RiskRequest & TransactionInput)"]
+    end
+
+    subgraph Service_Orchestration ["Service Orchestration Tier"]
+        RiskService["Risk Service<br/><code>backend/services/risk_service.py</code><br/>(Feature Assembly & Pipeline Wiring)"]
+        V2Hardening["V2 Sanity & Validation<br/>(Bounds Check & Prob Verification)"]
+    end
+
+    subgraph ML_Intelligence ["ML Intelligence & Explanations"]
+        FeatEng["Feature Pipeline<br/><code>ml/features/build_features.py</code><br/>(15 Strictly-Prior Features)"]
+        LGBM["Frozen LightGBM Artifact<br/><code>ml/models/candidate_lgbm_v1.pkl</code><br/>(Trained on Synthetic Data)"]
+        SHAP["SHAP TreeExplainer<br/><code>ml/evaluation/explainability.py</code><br/>(Additivity: base + &Sigma;shap &approx; prob)"]
+        Scorer["Risk Scoring Layer<br/><code>ml/evaluation/risk_scoring.py</code><br/>(0-100 Score & Category)"]
+    end
+
+    subgraph Governance ["Deterministic Governance & Audit Tier"]
+        Policy["Deterministic Policy Engine<br/><code>ml/evaluation/policy.py</code><br/>(5-Rule Ordered Table)"]
+        Audit["Audit Persistence Layer<br/><code>backend/services/audit_service.py</code><br/>(SQLite <code>audit.db</code>)"]
+    end
+
+    UI -->|HTTP POST JSON| Routes
+    Routes --> Validation
+    Validation --> RiskService
+    RiskService --> FeatEng
+    FeatEng --> V2Hardening
+    V2Hardening --> LGBM
+    LGBM -->|P(fraud)| V2Hardening
+    V2Hardening --> Scorer
+    V2Hardening --> SHAP
+    V2Hardening --> Policy
+    Policy -->|DecisionRecord| Audit
+    Policy -->|Structured Action| Routes
+    Routes -->|JSON Response| UI

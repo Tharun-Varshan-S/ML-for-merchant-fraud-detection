@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 680" width="100%" height="100%" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #ffffff;">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0f172a" flood-opacity="0.08"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569"/>
+    </marker>
+    <marker id="arrow-primary" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-emerald" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#059669"/>
+    </marker>
+  </defs>
+
+  <!-- Title & Subtitle -->
+  <text x="500" y="32" text-anchor="middle" font-size="20" font-weight="700" fill="#0f172a">MerchantShield AI — High-Level System Architecture</text>
+  <text x="500" y="52" text-anchor="middle" font-size="12" fill="#64748b">Decoupled ML probability estimation, grounded SHAP explainability, and deterministic policy governance</text>
+
+  <!-- Tier 1: Client / Presentation Tier -->
+  <rect x="40" y="80" width="920" height="90" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <text x="60" y="104" font-size="12" font-weight="700" fill="#475569" letter-spacing="1">TIER 1: CLIENT &amp; PRESENTATION (REACT 19 / VITE)</text>
+  
+  <rect x="60" y="115" width="410" height="42" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="265" y="141" text-anchor="middle" font-size="13" font-weight="600" fill="#1e40af">React Dashboard UI (frontend/src/App.jsx)</text>
+
+  <rect x="530" y="115" width="410" height="42" rx="6" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="735" y="141" text-anchor="middle" font-size="13" font-weight="600" fill="#166534">Sample Scenarios &amp; Manual Drafts (sampleScenarios.js)</text>
+
+  <!-- Flow 1 to 2 -->
+  <line x1="265" y1="157" x2="265" y2="200" stroke="#2563eb" stroke-width="2" marker-end="url(#arrow-primary)"/>
+  <text x="275" y="184" font-size="11" font-weight="600" fill="#2563eb">HTTP POST /risk/evaluate (JSON)</text>
+
+  <line x1="735" y1="200" x2="735" y2="157" stroke="#2563eb" stroke-width="2" marker-end="url(#arrow-primary)"/>
+  <text x="745" y="184" font-size="11" font-weight="600" fill="#2563eb">HTTP 200 Structured Response</text>
+
+  <!-- Tier 2: API Gateway & Validation -->
+  <rect x="40" y="202" width="920" height="95" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="60" y="226" font-size="12" font-weight="700" fill="#475569" letter-spacing="1">TIER 2: API GATEWAY &amp; VALIDATION (FASTAPI / PYDANTIC V2)</text>
+
+  <rect x="60" y="238" width="410" height="45" rx="6" fill="#ffffff" stroke="#0284c7" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="265" y="258" text-anchor="middle" font-size="13" font-weight="600" fill="#0369a1">FastAPI Routers (backend/api/routes.py)</text>
+  <text x="265" y="274" text-anchor="middle" font-size="11" fill="#64748b">/health, /model/info, /risk/score, /risk/explain, /risk/evaluate</text>
+
+  <rect x="530" y="238" width="410" height="45" rx="6" fill="#ffffff" stroke="#0284c7" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="735" y="258" text-anchor="middle" font-size="13" font-weight="600" fill="#0369a1">Schema Validation (backend/schemas/transaction.py)</text>
+  <text x="735" y="274" text-anchor="middle" font-size="11" fill="#64748b">RiskRequest: Validates chronological timestamps &amp; customer match</text>
+
+  <!-- Flow 2 to 3 -->
+  <line x1="500" y1="297" x2="500" y2="330" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="510" y="318" font-size="11" font-weight="600" fill="#475569">Validated Payload Passed to Service</text>
+
+  <!-- Tier 3: Core Service Orchestration & ML Intelligence -->
+  <rect x="40" y="332" width="920" height="195" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="60" y="356" font-size="12" font-weight="700" fill="#475569" letter-spacing="1">TIER 3: ORCHESTRATION &amp; ML INTELLIGENCE</text>
+
+  <!-- Service Controller -->
+  <rect x="60" y="368" width="880" height="34" rx="6" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+  <text x="500" y="390" text-anchor="middle" font-size="12" font-weight="700" fill="#334155">backend/services/risk_service.py — Orchestrates Data Preparation &amp; Execution Pipeline</text>
+
+  <!-- 4 Sub-boxes of Tier 3 -->
+  <rect x="60" y="414" width="205" height="98" rx="6" fill="#ffffff" stroke="#059669" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="162" y="435" text-anchor="middle" font-size="12" font-weight="700" fill="#065f46">Feature Engineering</text>
+  <text x="162" y="452" text-anchor="middle" font-size="11" fill="#047857">ml/features/build_features.py</text>
+  <text x="162" y="475" text-anchor="middle" font-size="10" fill="#334155">• 15 strictly-prior features</text>
+  <text x="162" y="492" text-anchor="middle" font-size="10" fill="#334155">• Expanding running stats</text>
+  <text x="162" y="504" text-anchor="middle" font-size="10" fill="#64748b">Leakage-safe (no future data)</text>
+
+  <rect x="285" y="414" width="205" height="98" rx="6" fill="#ffffff" stroke="#d97706" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="387" y="435" text-anchor="middle" font-size="12" font-weight="700" fill="#92400e">LightGBM Classifier</text>
+  <text x="387" y="452" text-anchor="middle" font-size="11" fill="#b45309">candidate_lgbm_v1.pkl</text>
+  <text x="387" y="475" text-anchor="middle" font-size="10" fill="#334155">• Frozen model artifact</text>
+  <text x="387" y="492" text-anchor="middle" font-size="10" fill="#334155">• Output: raw P(fraud)</text>
+  <text x="387" y="504" text-anchor="middle" font-size="10" fill="#64748b">Hardened: NaN/Inf/[0,1] check</text>
+
+  <rect x="510" y="414" width="205" height="98" rx="6" fill="#ffffff" stroke="#7c3aed" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="612" y="435" text-anchor="middle" font-size="12" font-weight="700" fill="#5b21b6">SHAP TreeExplainer</text>
+  <text x="612" y="452" text-anchor="middle" font-size="11" fill="#6d28d9">ml/evaluation/explainability.py</text>
+  <text x="612" y="475" text-anchor="middle" font-size="10" fill="#334155">• Grounded contributions</text>
+  <text x="612" y="492" text-anchor="middle" font-size="10" fill="#334155">• Additivity verified (&lt;1e-4)</text>
+  <text x="612" y="504" text-anchor="middle" font-size="10" fill="#64748b">Informational (never sets action)</text>
+
+  <rect x="735" y="414" width="205" height="98" rx="6" fill="#ffffff" stroke="#0891b2" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="837" y="435" text-anchor="middle" font-size="12" font-weight="700" fill="#155e75">Risk Scoring Display</text>
+  <text x="837" y="452" text-anchor="middle" font-size="11" fill="#0e7490">ml/evaluation/risk_scoring.py</text>
+  <text x="837" y="475" text-anchor="middle" font-size="10" fill="#334155">• Linear 0-100 risk score</text>
+  <text x="837" y="492" text-anchor="middle" font-size="10" fill="#334155">• Tiers: LOW, MED, HIGH, CRIT</text>
+  <text x="837" y="504" text-anchor="middle" font-size="10" fill="#64748b">Decoupled from action policy</text>
+
+  <!-- Flow 3 to 4 -->
+  <line x1="387" y1="512" x2="387" y2="550" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="280" y="536" font-size="11" font-weight="600" fill="#0f172a">P(fraud), Amount</text>
+
+  <line x1="612" y1="512" x2="612" y2="550" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#arrow)"/>
+  <text x="620" y="536" font-size="10" fill="#64748b">Explanation Narrative (Audit Only)</text>
+
+  <!-- Tier 4: Governance & Audit -->
+  <rect x="40" y="552" width="920" height="105" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="60" y="576" font-size="12" font-weight="700" fill="#475569" letter-spacing="1">TIER 4: GOVERNANCE, POLICY &amp; AUDIT TRAIL</text>
+
+  <rect x="60" y="588" width="410" height="52" rx="6" fill="#fff1f2" stroke="#e11d48" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="265" y="609" text-anchor="middle" font-size="13" font-weight="700" fill="#9f1239">Deterministic Policy Engine (policy.py &amp; decision_engine.py)</text>
+  <text x="265" y="627" text-anchor="middle" font-size="11" fill="#be123c">5-rule cascade: BLOCK, STEP_UP, MONITOR, ALLOW | Bound to cost threshold 0.40</text>
+
+  <!-- Flow policy to audit -->
+  <line x1="470" y1="614" x2="530" y2="614" stroke="#e11d48" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="500" y="606" text-anchor="middle" font-size="10" font-weight="600" fill="#e11d48">Record</text>
+
+  <rect x="530" y="588" width="410" height="52" rx="6" fill="#f8fafc" stroke="#475569" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="735" y="609" text-anchor="middle" font-size="13" font-weight="700" fill="#1e293b">SQLite Audit Store (backend/services/audit_service.py)</text>
+  <text x="735" y="627" text-anchor="middle" font-size="11" fill="#475569">Table audit_log: Persists decision facts &amp; SHAP text | Omits PII | Isolated error handling</text>
+
+</svg>

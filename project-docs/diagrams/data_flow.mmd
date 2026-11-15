@@ -1,0 +1,30 @@
+sequenceDiagram
+    autonumber
+    actor User as Analyst / Client
+    participant FE as React Frontend
+    participant API as FastAPI Router
+    participant Serv as Risk Service
+    participant Feat as Feature Pipeline
+    participant Model as LightGBM Classifier
+    participant SHAP as SHAP Explainer
+    participant Dec as Decision Engine
+    participant DB as SQLite Audit Store
+
+    User->>FE: Select Scenario / Submit Transaction
+    FE->>API: POST /risk/evaluate (JSON payload)
+    API->>Serv: evaluate_full(bundle, request)
+    Serv->>Feat: build_features([prior_txns] + [current_txn])
+    Feat-->>Serv: DataFrame (15 features)
+    Serv->>Serv: _validate_engineered_features(row)
+    Serv->>Model: predict_proba(X)
+    Model-->>Serv: raw probability
+    Serv->>Serv: _validate_model_probability(p)
+    Serv->>Dec: make_decision(id, p, amount)
+    Dec-->>Serv: DecisionRecord (action, rule_id, risk_score)
+    Serv->>SHAP: explain(row)
+    SHAP-->>Serv: SHAP values + grounded text
+    Serv-->>API: (DecisionRecord, explanation, request_id)
+    API->>DB: record_decision(entry) [isolated try/except]
+    DB-->>API: persist success/failure flag
+    API-->>FE: HTTP 200 (RiskEvaluateResponse)
+    FE-->>User: Render Card, Action Badge, SHAP Bars

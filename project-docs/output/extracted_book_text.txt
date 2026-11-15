@@ -1,0 +1,3927 @@
+ENGINEERING MONOGRAPH & ARCHITECTURE AUDIT
+
+MerchantShield AI
+A Claude-Level Project Understanding & Technical Learning Book: From
+Business Intent and Asymmetric Risk Economics to Leakage-Safe Feature
+Engineering and Deterministic Policy Governance.
+
+TARGET TRACK
+
+SYSTEM ARCHITECTURE
+
+Razorpay AI Buildathon 2026 — Track 02 (AI Risk Manager)
+
+Decoupled ML Estimator + Grounded SHAP + 5-Rule
+Deterministic Policy
+
+PRIMARY ARTIFACT
+
+EVALUATION RIGOR
+
+Frozen LightGBM Classifier (lgbm_v1) @ Cost-Min
+
+Chronological Split + IEEE-CIS External Real Chargeback
+
+Threshold 0.40
+
+Validation
+
+CODEBASE VERSION
+
+DOCUMENT DATE
+
+v1.0.0 (V2 Hardened: Sanity Bounds, Signal Quality,
+
+October 2026 | Technical Monograph Edition
+
+Migrations)
+
+Principal Software Architect & Technical Systems Auditor
+
+Production Architecture & Codebase Learning Reference
+
+MerchantShield AI — Project Understanding & Technical Book
+
+TABLE OF CONTENTS
+1 EXECUTIVE SUMMARY
+
+Section 1
+
+1.1 Project Overview & Core Mission
+1.2 Target Users & Integrating Systems
+1.3 Real-World Problem & Core Capabilities
+1.4 High-Level Architecture & Key Technologies
+1.5 System Boundaries, Inputs & Outputs
+1.6 Implementation Status & Limitations
+1.7 Executive Summary Master Reference Table
+
+2 PROBLEM STATEMENT
+
+Section 2
+
+2.1 The Existing Situation: Why Fraud Detection Fails in Practice
+2.2 The Three Fundamental Failures of Conventional Systems
+2.3 The Problem MerchantShield AI Solves
+2.4 Scope Boundaries: What Is In Scope vs. Deliberately Out of Scope
+2.5 Conventional Approach vs. MerchantShield AI Architecture
+
+3 EXPLAIN THE PROJECT TO A NORMAL FRIEND
+
+Section 3
+
+3.1 A Familiar Real-World Situation: Ananya's Handcrafted Silk Boutique
+3.2 The Nightmare Without MerchantShield: The Chargeback Trap
+3.3 Introducing MerchantShield AI: The Invisible Risk Manager
+3.4 The Complete Transaction Journey: Step-by-Step
+3.5 Mapping Everyday Concepts to Real Code Components
+
+4 TECH STACK AND WHAT EACH TECHNOLOGY DOES
+
+Section 4
+
+4.1 Master Technology Inventory & Architecture Map
+4.2 Python Ecosystem & Machine Learning Libraries
+4.3 LightGBM & SHAP: The Dual Reasoning Engine
+4.4 Backend API Stack: FastAPI, Pydantic v2 & Uvicorn
+4.5 Persistence & Governance: SQLAlchemy & SQLite
+4.6 Frontend Architecture: React 19, Vite & Vanilla CSS
+4.7 Verification & DevOps: pytest & Multi-Stage Docker
+4.8 Dependency Classification: Direct, Indirect & Tooling
+
+5 CODEBASE EXPLORATION: EVERY IMPORTANT FILE AND FOLDER
+
+Section 5
+
+5.1 Complete Repository Directory Tree
+5.2 Folder-by-Folder Structural Overview
+5.3 File-by-File Technical Reference Inventory
+5.4 Critical File Deep Dives & Code Walkthroughs
+5.5 File Dependency & Runtime Execution Graph
+
+6 ARCHITECTURE, DATABASE DESIGN, AND API DESIGN
+
+Section 6
+
+6.1 Conceptual Architecture & Component Responsibilities
+6.2 Database & Storage Design: The SQLite Audit Store
+6.3 API & Interface Design: The Six Endpoints
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 2
+
+MerchantShield AI — Project Understanding & Technical Book
+
+6.4 Architectural Trade-Offs, Invariants & Decoupling
+6.5 End-to-End Sequence & Data Flow
+
+7 THE COMPLETE PROJECT PIPELINE: STAGE BY STAGE
+
+Section 7
+
+7.0 Execution Pipeline Overview
+Stage 1: System Bootstrapping & Model Loading
+Stage 2: Request Reception & Strict Shape Validation
+Stage 3: Leakage-Safe Feature Engineering
+Stage 4: Feature Bounds Checking & V2 Hardening
+Stage 5: LightGBM Model Inference & Output Hardening
+Stage 6: Grounded SHAP Explainability & Additivity Verification
+Stage 7: Deterministic Policy Evaluation & Action Bounding
+Stage 8: Fail-Safe Audit Trail Persistence
+Stage 9: Response Synthesis & Client Delivery
+7.10 Complete Worked Execution Trace
+
+8 FINAL SUMMARY AND PROJECT MASTERY
+
+Section 8
+
+8.1 The Project in One Complete Narrative
+8.2 Complete Flow Recap (10-Step Numbered Sequence)
+8.3 Key Architectural Components to Remember
+8.4 Verified Strengths vs. Explicit Prototype Limitations
+8.5 Self-Testing Examination & Grounded Answers
+8.6 How to Explain This Project to Another Engineer
+8.7 Engineering Glossary & Final Revision Checklist
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 3
+
+MerchantShield AI — Project Understanding & Technical Book
+
+1 EXECUTIVE SUMMARY
+1.1 Project Overview & Core Mission
+MerchantShield AI is an end-to-end, defensive transaction-risk decisioning platform engineered for electronic commerce merchants and digital
+payment service providers. Developed for the Razorpay AI Buildathon 2026 (Track 02 — AI Risk Manager), the system solves a fundamental,
+systemic failure in modern payment security: the conflation of raw machine learning statistical classification with operational decision-making.
+In a single evaluation cycle, MerchantShield AI ingests an incoming payment transaction along with its customer's prior transaction history,
+computes 15 strictly-prior behavioral features without future temporal leakage, estimates the probability of fraud using a frozen LightGBM
+gradient-boosted decision tree classifier ( candidate_lgbm_v1.pkl ), mathematically validates and decomposes that estimate using grounded
+Shapley Additive exPlanations (SHAP), and maps the probability to a bounded, auditable operational recommendation ( ALLOW ,
+ALLOW_WITH_MONITORING , STEP_UP_VERIFICATION , or BLOCK ) using a transparent five-rule deterministic policy table. Crucially, the system
+
+is strictly advisory: it never executes irreversible financial side effects such as freezing bank accounts, moving funds, or issuing unilateral
+chargebacks.
+
+Core Architectural Axiom: The Three-Tier Separation of Concerns
+MerchantShield AI enforces a structural, architectural decoupling between three distinct operational concerns:
+1. The Statistical Estimator: A machine learning model estimates the objective probability of fraud: P(fraud) ∈ [0.0, 1.0] . It does not
+decide what to do.
+2. The Human Presentation Layer: A deterministic function maps the continuous probability to a 0–100 risk score and categorical tier ( LOW ,
+MEDIUM , HIGH , CRITICAL ) solely for human cognitive ergonomics.
+
+3. The Governance Policy Engine: An independent, deterministic rule cascade evaluates (probability, amount) against an asymmetric
+economic cost threshold (0.40) to select a bounded operational action.
+Because these tiers are strictly decoupled, modifying display buckets can never silently alter financial actions, and bugs in explanatory text can
+never alter transaction disposition.
+
+1.2 Target Users & Integrating Systems
+MerchantShield AI is designed to integrate into two distinct operational environments:
+Payment Gateways & Merchant Acquirers (e.g., Razorpay, Stripe, Adyen): Placed inline within the pre-authorization or post-authorization
+payment routing pipeline. The gateway supplies the transaction context and receives a bounded risk recommendation in sub-50 milliseconds.
+Merchant Risk Operations Teams & Fraud Analysts: Interacting through the dedicated React 19 dashboard, fraud analysts investigate
+high-risk transactions, review grounded SHAP attribution bars explaining exactly why an alert fired, verify historical velocity, and inspect an
+immutable SQLite audit trail.
+
+1.3 Real-World Problem & Core Capabilities
+Conventional fraud detection models routinely fail rigorous production scrutiny for three compounding reasons:
+1. Deceptive Metric Reporting on Imbalanced Classes: At real-world fraud rates (1% to 3.5%), reporting standard classification "accuracy" is
+completely meaningless (a naive model predicting 100% legitimate achieves 98.5% accuracy while catching 0% of fraud).
+2. The Arbitrary 0.5 Threshold Flaw: Defaulting to a 0.50 classification cutoff ignores the severe economic asymmetry between the cost of a
+false positive (customer checkout friction, support tickets, lost lifetime value) and the cost of a false negative (chargeback fees, stolen
+merchandise, merchant penalties).
+3. The Black-Box Explanatory Deficit: Complex ensemble models or neural networks cannot explain to a human compliance officer or
+merchant why a transaction was halted, leading to regulatory vulnerability and merchant distrust.
+MerchantShield AI addresses all three problems simultaneously through verified capabilities:
+Leakage-Safe Feature Pipeline: All 15 behavioral signals (velocity windows, amount z-scores, rolling failure rates, device novelty) are
+computed strictly from events prior to the current transaction timestamp, proven by a 213,000-row leakage verification test suite.
+Cost-Driven Threshold Optimization: Operating threshold (0.40) was selected by sweeping thresholds against an explicit financial cost
+model (₹50 flat FP cost; 0.5 × amount FN cost) on a held-out validation set, subject to an operational floor of ≥80% fraud recall.
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 4
+
+MerchantShield AI — Project Understanding & Technical Book
+
+Grounded SHAP Explainability with Additivity Verification: Per-transaction feature contributions derived from shap.TreeExplainer
+verify mathematical additivity ( base_value + Σshap ≈ predict_proba within 1e-4) on every API invocation.
+V2 Production Hardening: Defensive model validation rejects non-finite probabilities (NaN/Inf) and out-of-range floats, while feature bounds
+checking guards against pathological input spikes. Historical signal quality grading ( MINIMAL , LIMITED , MODERATE , ESTABLISHED )
+transparently communicates context sufficiency.
+
+1.4 High-Level Architecture & Key Technologies
+The system consists of a modern, containerized client-server architecture built on Python 3.13 and React 19:
+
+MerchantShield AI — High-Level System Architecture
+Decoupled ML probability estimation, grounded SHAP explainability, and deterministic policy governance
+
+TIER 1: CLIENT & PRESENTATION (REACT 19 / VITE)
+
+React Dashboard UI (frontend/src/App.jsx)
+
+Sample Scenarios & Manual Drafts (sampleScenarios.js)
+
+HTTP POST /risk/evaluate (JSON)
+
+HTTP 200 Structured Response
+
+TIER 2: API GATEWAY & VALIDATION (FASTAPI / PYDANTIC V2)
+
+FastAPI Routers (backend/api/routes.py)
+
+Schema Validation (backend/schemas/transaction.py)
+
+/health, /model/info, /risk/score, /risk/explain, /risk/evaluate
+
+RiskRequest: Validates chronological timestamps & customer match
+
+Validated Payload Passed to Service
+
+TIER 3: ORCHESTRATION & ML INTELLIGENCE
+backend/services/risk_service.py — Orchestrates Data Preparation & Execution Pipeline
+
+Feature Engineering
+
+LightGBM Classifier
+
+SHAP TreeExplainer
+
+Risk Scoring Display
+
+ml/features/build_features.py
+
+candidate_lgbm_v1.pkl
+
+ml/evaluation/explainability.py
+
+ml/evaluation/risk_scoring.py
+
+• 15 strictly-prior features
+
+• Frozen model artifact
+
+• Grounded contributions
+
+• Linear 0-100 risk score
+
+• Expanding running stats
+Leakage-safe (no future data)
+
+• Output: raw P(fraud)
+Hardened: NaN/Inf/[0,1] check
+
+• Additivity verified (<1e-4)
+Informational (never sets action)
+
+• Tiers: LOW, MED, HIGH, CRIT
+Decoupled from action policy
+
+P(fraud), Amount
+
+Explanation Narrative (Audit Only)
+
+TIER 4: GOVERNANCE, POLICY & AUDIT TRAIL
+
+Deterministic Policy Engine (policy.py & decision_engine.py)
+5-rule cascade: BLOCK, STEP_UP, MONITOR, ALLOW | Bound to cost threshold 0.40
+
+Record
+
+SQLite Audit Store (backend/services/audit_service.py)
+Table audit_log: Persists decision facts & SHAP text | Omits PII | Isolated error handling
+
+Figure 1.1: MerchantShield AI High-Level Architecture — Tiered Client, API Gateway, ML Intelligence, and Governance Layers.
+
+The technical foundation comprises:
+Machine Learning & Math: Python 3.13, NumPy 2.4, pandas 3.0, scikit-learn 1.8, LightGBM 4.7, SHAP 0.52, and SciPy 1.17.
+Backend API & Services: FastAPI 0.141, Pydantic v2.13, Uvicorn 0.52, SQLAlchemy 2.0, and SQLite 3.
+Frontend Client: React 19.2, Vite 8.2, and Vanilla CSS Tokens (no heavy CSS framework dependencies).
+Testing & DevOps: pytest 9.1, HTTPX 0.28, multi-stage Docker (Node 22 + Python 3.13), and GitHub Actions CI.
+
+1.5 System Boundaries, Inputs & Outputs
+MerchantShield AI operates under strictly enforced boundaries:
+Inputs: The API accepts a RiskRequest containing the target TransactionInput (transaction ID, customer ID, merchant ID, amount,
+timestamp, device ID, geographic region, payment method, status, account creation time) and an optional list of prior_transactions for
+that same customer.
+Outputs: A strongly-typed RiskEvaluateResponse containing the transaction ID, model version ( lgbm_v1 ), raw fraud probability, frozen
+threshold (0.40), 0–100 risk score, categorical tier, recommended operational action, triggering policy rule ID, human-readable policy reason,
+grounded SHAP explanation header and reasons, signal quality rating, and audit persistence confirmation.
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 5
+
+MerchantShield AI — Project Understanding & Technical Book
+
+Boundaries: MerchantShield AI does not manage bank transfers, does not capture funds, does not store cardholder primary account
+numbers (PAN), and does not persist customer PII in its audit log.
+
+1.6 Implementation Status & Limitations
+To maintain complete scientific and architectural integrity, the repository explicitly distinguishes verified implementations from prototype
+constraints:
+Fully Implemented and Verified: The feature engineering pipeline, chronological split utility, LightGBM training, cost-optimized threshold
+analysis, SHAP explainer with additivity checking, deterministic 5-rule policy engine, FastAPI REST API, SQLite audit persistence with
+idempotent schema migration, React 19 dashboard, and 269 automated unit/hardening tests.
+External Real-Data Validation (Phases 14–17): Methodology was evaluated on 590,540 real-world e-commerce transactions from the
+IEEE-CIS dataset (Vesta chargebacks). The frozen synthetic model failed to transfer (ROC-AUC 0.443) due to distribution shift in customer zscores, but retraining with MerchantShield's feature engineering achieved ROC-AUC 0.771 and 79.8% fraud recall at an expected cost of
+2,469,531 cost units on the held-out test split.
+Prototype Limitations: Production model was trained on generator-controlled synthetic data (~213k transactions, 1.5% fraud). The
+prototype does not include a live customer transaction database (callers must provide historical context), has no authentication layer, and
+ALLOW_WITH_MONITORING is an auditable policy label without an autonomous background polling daemon.
+
+1.7 Executive Summary Master Reference Table
+Dimension
+
+System Specification / Implementation Reality
+
+Project Name & Track
+
+MerchantShield AI — Razorpay AI Buildathon 2026 (Track 02: AI Risk Manager)
+
+Core Architecture
+
+Decoupled 3-Tier: LightGBM Classifier → SHAP Explainer → 5-Rule Deterministic Policy Cascade
+
+Primary Model Artifact
+
+ml/models/candidate_lgbm_v1.pkl (LightGBM, max_depth=6, num_leaves=31, scale_pos_weight=73.2)
+
+Selected Decision Threshold
+
+0.40 (Chosen on validation set to minimize expected cost subject to Recall ≥ 80%)
+
+Test Set Performance (Synthetic)
+
+Precision: 78.5% | Recall: 88.2% | F1: 0.830 | PR-AUC: 0.901 | Est. Cost: ₹41,377
+
+External Held-Out Test (IEEECIS)
+
+ROC-AUC: 0.771 | Recall: 79.8% (3,243 / 4,064 frauds caught) | Selected Threshold: 0.35
+
+Action Catalog
+
+ALLOW , ALLOW_WITH_MONITORING , STEP_UP_VERIFICATION , BLOCK (Purely advisory
+recommendations)
+
+Feature Engineering
+
+15 strictly-prior features computed across customer historical sequences (Leakage verified)
+
+Explainability Engine
+
+TreeExplainer with per-request additivity check ( |base + Σshap - prob| < 1e-4 ) + Grounded templates
+
+Persistence & Audit
+
+SQLite ( backend/data/audit.db ) via SQLAlchemy 2.0; stores decision facts; omits customer PII
+
+Frontend Dashboard
+
+React 19, Vite 8, pure CSS design tokens; consumes HTTP/JSON only (zero Python backend imports)
+
+Test Suite Coverage
+
+269 passing automated unit/property tests covering leakage, policy boundaries, SHAP additivity & V2 hardening
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 6
+
+MerchantShield AI — Project Understanding & Technical Book
+
+2 PROBLEM STATEMENT
+2.1 The Existing Situation: Fraud Detection in Practice
+In contemporary electronic commerce and digital payments, merchant enterprises face a relentless operational challenge: discerning legitimate
+consumer transactions from unauthorized or fraudulent activity in real time. Before modern intelligent risk platforms exist, organizations typically
+rely on one of two extremes:
+1. Static Rule Engines: Primitive "if-then" heuristic rules defined by risk committees (e.g., "flag any transaction exceeding ₹10,000" or "block
+any payment originating from a new device at night"). While transparent and fast, static rules are brittle, incapable of learning nuanced
+customer behaviors, easily circumvented by organized fraud rings, and notorious for generating massive false-positive rates that insult loyal
+customers.
+2. Opaque Monolithic ML Classifiers: Second-generation systems employ black-box statistical algorithms (random forests, neural networks,
+or gradient-boosted trees) that output a raw score between 0.0 and 1.0. However, these systems are almost universally deployed with naive
+defaults (such as a 0.50 classification cutoff) and lack transparent operational interpretation.
+When a fraudulent transaction bypasses these systems, the merchant suffers a chargeback: the true cardholder discovers the unauthorized
+charge, contacts their issuing bank, and claws back the funds. The merchant loses the merchandise shipped, loses the transaction revenue,
+incurs a punitive bank chargeback fee (typically ₹1,000 to ₹2,500 per incident), and risks being terminated by payment aggregators if their
+monthly chargeback ratio breaches 1.0%. Conversely, when a legitimate customer is wrongly declined due to an aggressive heuristic rule (a
+false positive), the customer experiences embarrassment, abandons their cart, and often migrates permanently to a competing platform.
+
+2.2 The Three Fundamental Failures of Conventional Systems
+As documented in the repository's core problem analysis, fraud detection systems frequently collapse under rigorous architectural and
+operational scrutiny due to three compounding systemic failures:
+
+Failure 1: Meaningless Metric Reporting Under Extreme Class Imbalance
+In real-world payment streams, fraudulent transactions account for a tiny fraction of total volume—typically between 1.0% and 3.5%. Under this
+extreme class imbalance, traditional machine learning metrics such as raw classification accuracy or standard ROC-AUC become dangerously
+misleading.
+Consider an evaluation dataset containing 100,000 transactions where 1,500 are fraudulent (1.5% fraud prevalence). A trivial, degenerate
+classifier that predicts legitimate for every single transaction achieves an impressive 98.5% accuracy, yet it allows ₹10,000,000 in fraud
+losses and catches zero criminal activity. Similarly, ROC-AUC evaluates the true positive rate against the false positive rate across all negative
+samples; because the pool of legitimate transactions is vast (98,500), tens of thousands of false alarms barely register on the ROC curve,
+yielding an deceptively high ROC-AUC (e.g., 0.95) even when nine out of ten flagged transactions are completely innocent customers.
+
+Failure 2: The Arbitrary 0.50 Threshold Without Economic Justification
+Standard machine learning textbooks and off-the-shelf library defaults (such as scikit-learn 's predict() ) apply a symmetric probability
+threshold of p ≥ 0.50 to convert a probability into a binary decision. In financial risk management, this default is economically irrational.
+Fraud risk is inherently asymmetric in cost:
+The Cost of a False Positive (FP): Wrongly challenging or declining a legitimate customer incurs an operational cost (customer service
+inquiries, manual verification labor, and customer goodwill friction). In MerchantShield's model, this is modeled as an assumed flat
+operational expense of ₹50 per occurrence.
+The Cost of a False Negative (FN): Permitting a fraudulent transaction causes direct financial loss. The merchant is liable for the stolen
+amount and chargeback penalties. In MerchantShield's cost model, this is formulated as a configurable fraction (e.g., 50% to 100%) of the
+actual transaction amount. On a ₹50,000 purchase, a false negative costs ₹25,000 to ₹50,000—between 500 and 1,000 times greater than
+the cost of a false positive.
+Under asymmetric costs, the economically optimal threshold is almost never 0.50. Setting the threshold arbitrarily high (e.g., to maximize the
+harmonic F1-score at 0.80) yields high precision but misses millions in mid-range fraud, resulting in a 38% higher total financial cost to the
+merchant.
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 7
+
+MerchantShield AI — Project Understanding & Technical Book
+
+Failure 3: The Black-Box Explanatory Deficit
+When a traditional machine learning model outputs a risk score of 0.72, it provides zero actionable reasoning. A merchant risk analyst looking at
+the dashboard cannot answer:
+"Did the score jump because the customer is in a new city?"
+"Is it because they placed five orders in the last ten minutes?"
+"Or is it simply because they purchased an expensive television?"
+Without grounded explainability, human reviewers cannot distinguish a true fraud ring attack from a loyal customer traveling on vacation.
+Furthermore, emerging data protection regulations and consumer credit acts strictly require financial institutions to explain adverse actions taken
+against consumers.
+
+2.3 The Problem MerchantShield AI Solves
+MerchantShield AI was architected from the ground up to solve these three compounding failures in a unified, auditable software platform. The
+central objective of the project is to provide a calibrated, economically rational, and human-explainable decisioning layer that sits between
+raw payment telemetry and business action.
+Specifically, MerchantShield AI guarantees:
+1. Precision-Recall & Cost-Driven Evaluation: Performance is reported exclusively using Precision-Recall Area Under the Curve (PR-AUC),
+precision, recall, and total expected financial cost, measured strictly on held-out chronological test sets.
+2. Cost-Optimal Operating Threshold Selection: Rather than assuming 0.50, the platform sweeps thresholds across a dedicated validation
+split against a rigorous financial cost objective:
+Total Expected Cost = (Count(FP) × Cost_FP) + Σ (Amount_FN × Fraction_FN)
+
+The operating cutoff is frozen at the exact mathematical minimum (0.40) subject to a hard operational requirement of ≥80% fraud recall.
+3. Mathematically Grounded Explainability: Every scored transaction receives an attribution breakdown derived from exact tree-based
+Shapley values, verified by a mathematical additivity check on every API call.
+4. Deterministic, Auditable Action Policy: A transparent five-rule cascade maps validated probabilities into four bounded operational
+recommendations ( ALLOW , ALLOW_WITH_MONITORING , STEP_UP_VERIFICATION , BLOCK ).
+
+2.4 Scope Boundaries: What Is In Scope vs. Deliberately Out of Scope
+To maintain engineering clarity and avoid architectural overreach, the repository establishes explicit functional boundaries:
+Dimension
+
+Strictly In Scope (Implemented & Verified)
+
+Deliberately Out of Scope (Prototype Boundaries)
+
+Data Engineering
+
+15 strictly-prior behavioral features computed across historical
+customer sequences.
+
+Live streaming Kafka/Flink infrastructure; real-time graph
+database queries.
+
+Model Lifecycle
+
+Chronological data partitioning; baseline vs. candidate
+benchmarking; frozen LightGBM artifact.
+
+Autonomous online retraining; dynamic real-time model
+hyperparameter updates.
+
+Operational
+Decisioning
+
+Transparent 5-rule policy table returning bounded operational
+recommendations.
+
+Irreversible financial actions; automated fund freezing; executing
+direct payment gateway refund APIs.
+
+Explainability
+
+SHAP TreeExplainer with additivity verification (1e-4) and
+grounded template generation.
+
+Unconstrained Large Language Model (LLM) narrative
+generation or conversational chat agents.
+
+Persistence &
+Audit
+
+Local SQLite database capturing full decision facts, rule IDs,
+and SHAP narratives.
+
+Distributed enterprise SIEM integration; replication across multiregion PostgreSQL clusters.
+
+Security & Auth
+
+Pydantic input shape validation; sanitization of non-finite
+inputs; zero PII persistence.
+
+OAuth2/OIDC user authentication; RBAC roles; TLS termination
+(assumed handled by reverse proxy).
+
+2.5 Conventional Approach vs. MerchantShield AI Architecture
+The following comparative matrix illustrates how MerchantShield AI replaces conventional industry practices with defensible software
+engineering patterns:
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 8
+
+MerchantShield AI — Project Understanding & Technical Book
+
+System
+Dimension
+
+Conventional Fraud Detection Approach
+
+MerchantShield AI Implementation Pattern
+
+Performance
+Reporting
+
+Reports raw accuracy (e.g. "99% accurate") on
+imbalanced data, hiding severe false negative
+leakage.
+
+Reports PR-AUC, Precision, Recall, and Expected Rupee Cost on
+held-out chronological test partitions.
+
+Threshold
+Selection
+
+Defaults arbitrarily to 0.50 , or picks the F1-
+
+Cost-Minimizing Validation Sweep: Threshold 0.40 selected
+mathematically to minimize FP/FN losses subject to ≥80% recall.
+
+Feature
+Engineering
+
+Random cross-validation shuffles data, leaking future
+customer transactions into past feature averages.
+
+Chronological Separation: All 15 features depend strictly on prior events
+( timestamp < current ), proven by automated leakage tests.
+
+Decision
+Authority
+
+The ML model directly triggers automated blocks, or
+an opaque score bucket drives arbitrary friction.
+
+Decoupled Deterministic Policy: A 5-rule ordered table determines
+bounded action. SHAP cannot alter the action.
+
+Reason
+Transparency
+
+Black-box score output or hallucinated LLM
+explanations disconnected from mathematical model
+weights.
+
+Grounded SHAP Attribution: Exact Shapley values verified on every
+call: base_value + Σshap ≈ predict_proba .
+
+Audit Compliance
+
+Transformed feature vectors or raw merchant PII
+dumped into unstructured application logs.
+
+Governance-First Audit Store: Persists exact decision facts and SHAP
+text while strictly omitting customer PII.
+
+Cold-Start
+Behavior
+
+New customers produce unpredictable outlier z-scores
+or crash rolling window aggregations.
+
+Explicit Cold-Start Guardrails: Sentinel defaults, history-dependent
+feature filtering, and transparent signal_quality grading.
+
+maximizing point (0.80) which ignores asymmetric
+cost.
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 9
+
+MerchantShield AI — Project Understanding & Technical Book
+
+3 EXPLAIN THE PROJECT TO A NORMAL FRIEND
+3.1 A Familiar Real-World Situation: Ananya's Handcrafted Silk Boutique
+Imagine you have a close friend named Ananya who runs a growing, independent online boutique in Bangalore called "Varnam Silks". Ananya
+curates authentic Kanjivaram silk sarees and hand-woven garments. Over three years, Ananya has built a loyal community of several thousand
+repeat customers across India.
+Her typical customer spends between ₹1,500 and ₹4,000 per purchase. One such loyal customer is Vikram, a software engineer living in
+Indiranagar, Bangalore. Over the past eighteen months, Vikram has bought five sarees from Varnam Silks for his mother and sister. Every single
+time, Vikram ordered from his personal iPhone while connected to his home Wi-Fi network in Bangalore, paid around ₹2,500 using his familiar
+HDFC credit card, and the deliveries arrived without incident.
+To Vikram and Ananya, buying online feels instantaneous: Vikram clicks "Pay Now", a green checkmark appears three seconds later, Ananya
+packages the saree, and Blue Dart delivers it two days later.
+
+3.2 The Nightmare Without MerchantShield: The Chargeback Trap
+Now, let's see what happens when criminal fraud enters the picture without an intelligent system like MerchantShield AI.
+One Tuesday evening at 1:45 AM, an unauthorized third party operating from a computer in an unfamiliar location gains access to Vikram's
+stored payment credentials through an unrelated data breach. The attacker visits Ananya's website, creates a cart with four of her most luxurious
+wedding silk sarees totaling ₹45,000 (twenty times Vikram's normal spending), and clicks "Pay Now".
+What happens under a conventional, naive system?
+1. The Bank Sees Valid Card Details: Because the card number, expiration date, and CVV match the bank's database, the payment processor
+authorizes the charge.
+2. Ananya Ships the Goods: The next morning, Ananya sees a ₹45,000 order—her biggest sale of the week. Delighted, she carefully
+packages the exquisite hand-woven sarees and ships them via express courier.
+3. The True Cardholder Discovers the Theft: Three days later, the real Vikram checks his credit card statement, panics, and immediately calls
+his bank to report fraud: "I was asleep on Tuesday night; I never bought ₹45,000 worth of wedding sarees!"
+4. The Devastating Chargeback: The issuing bank investigates, confirms the theft, and forcibly claws back the ₹45,000 from Ananya's
+business bank account. On top of that, the payment processor penalizes Ananya with a ₹1,500 chargeback fee.
+Ananya is left completely devastated: she has lost the ₹45,000 in revenue, her physical silk sarees are gone forever, and she had to pay a
+penalty fee.
+In response, many merchants try to protect themselves by hiring human staff to manually review every large transaction or by installing crude,
+rigid rules like: "Block any order over ₹10,000". But this creates the opposite disaster: when Vikram genuinely wants to buy an expensive
+wedding anniversary gift for his wife for ₹25,000, the blunt rule blocks his card. Vikram is insulted, abandons the website, and buys from a giant
+retail competitor instead.
+
+3.3 Introducing MerchantShield AI: The Invisible Risk Manager
+This is why Ananya needs MerchantShield AI.
+Think of MerchantShield AI as an extraordinarily sharp, calm, and fair chief risk officer who stands behind the cash register 24 hours a day. Every
+time a customer clicks "Pay", this risk manager examines the transaction in less than fifty milliseconds.
+Crucially, this digital risk manager does not guess, does not jump to wild conclusions, and does not hold an axe to instantly cancel orders.
+Instead, it follows a disciplined three-step reasoning process:
+1. It Looks at Behavioral Memory: It immediately retrieves Vikram's past shopping habits. It notices: "Vikram usually spends ₹2,500, shops
+between 6 PM and 9 PM, and always uses his iPhone in Bangalore."
+2. It Estimates the Objective Probability of Fraud: It compares the current purchase against thousands of past historical patterns using a
+sophisticated mathematical model. It calculates: "The probability that this 1:45 AM, ₹45,000 purchase from a brand-new device in an
+unfamiliar region is fraudulent is 99.9%."
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 10
+
+MerchantShield AI — Project Understanding & Technical Book
+
+3. It Applies a Balanced Business Policy: Instead of doing something irreversible, it looks at its rulebook. Because the risk is overwhelming
+(above 80%), it recommends: BLOCK. But if the risk had been moderate (say, Vikram buying a ₹5,000 saree while traveling on business), it
+wouldn't block him—it would simply recommend STEP-UP VERIFICATION, prompting Vikram for a quick One-Time Password (OTP) on his
+registered mobile phone!
+
+3.4 The Complete Scenario Walkthrough: Step-by-Step
+Let's trace exactly what happens under MerchantShield AI during that Tuesday night attack:
+
+Step 1: The Trigger
+At 01:45:12 UTC, the attacker clicks "Complete Purchase" on Varnam Silks' checkout page for transaction txn_live_test_001 . The online
+storefront's backend captures the checkout event.
+
+Step 2: Information Entering the System
+The storefront packages the transaction details into a structured digital envelope:
+Current Purchase: Amount ₹45,000; Customer ID cust_00042 (Vikram); Device ID dev_BRAND_NEW ; Region region_19 (unfamiliar);
+Time: 1:45 AM.
+Prior History: Vikram's past six legitimate orders from the last six months (all card payments between ₹500 and ₹2,500 from dev_known in
+region_03 ).
+
+Step 3: What the System Does With the Information
+MerchantShield AI's backend receives the envelope. In less than 15 milliseconds, its feature engine calculates 15 behavioral indicators strictly
+comparing the new order against the past history:
+Amount Spike: The current amount (₹45,000) is 85.7 times larger than Vikram's historical average amount (₹525).
+Z-Score Outlier: The amount is more than 20 standard deviations above his typical spending distribution.
+Device Novelty: The device hardware fingerprint has never been seen before in Vikram's account history.
+Geographic Novelty: The IP address and cellular location originate from a state where Vikram has never transacted.
+Time of Day: The purchase is taking place in the middle of the night (overnight hours).
+
+Step 4: How It Makes Decisions (The Probability and Policy Ladder)
+The 15 numbers are passed to the trained LightGBM machine learning model. The model outputs a fraud probability of 0.9997 (99.97%).
+Next, the system passes (probability=0.9997, amount=45000) to its transparent 5-rule policy table:
+Rule 1 checks: Is probability ≥ 0.80? YES.
+The rule fires immediately: CRITICAL_BLOCK .
+Recommended action: BLOCK .
+
+Step 5: The Output Produced
+MerchantShield AI generates a comprehensive, transparent report:
+Action: BLOCK
+Risk Score: 100 / 100 (CRITICAL)
+Grounded Explanation: "Why this transaction was flagged: Transaction amount is 85.7x the customer's historical average amount, which
+increased risk; Device has not been seen previously for this customer, which increased risk; Geographic location is new for this customer,
+which increased risk."
+
+Step 6: What Happens Next
+Because the recommendation is BLOCK , the payment gateway halts the transaction before money moves. The attacker is stopped cold.
+Simultaneously, Ananya's dashboard logs the incident in its audit trail, and an automated SMS is sent to the real Vikram: "Did you just attempt a
+
+₹45,000 purchase? If not, please secure your card." Ananya ships zero goods, loses zero rupees, and avoids a ₹1,500 bank penalty.
+
+Step 7: When Something Goes Wrong (Fail-Safe Behavior)
+What happens if the database disk is full or the explanation module encounters a rare glitch?
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 11
+
+MerchantShield AI — Project Understanding & Technical Book
+
+MerchantShield AI is built with defensive isolation: the policy decision is calculated before the explanation is built and before the database is
+touched. Even if the SQLite audit log fails to save to disk, the API still returns the correct BLOCK decision to the checkout page, logging an
+internal warning ( audit_persisted: false ). The store's security is never compromised by an ancillary bookkeeping glitch!
+
+3.5 Mapping Everyday Concepts to Real Code Components
+The table below connects every character, event, and decision in Ananya's story to the exact software components and source files in the
+MerchantShield AI repository:
+Story Concept
+
+Meaning in Everyday Analogy
+
+Technical Software Concept
+
+Actual Source Code File
+
+The Checkout
+Envelope
+
+The order details and Vikram's
+past receipts passed to the risk
+manager.
+
+Validated Pydantic Request
+Model with historical context.
+
+backend/schemas/transaction.py
+( RiskRequest )
+
+The Behavioral
+Memory
+
+Comparing the new saree order
+to Vikram's past spending and
+familiar devices.
+
+15 strictly-prior expanding
+statistical features.
+
+( build_features() )
+
+Sanity
+Inspection
+
+Checking that the order doesn't
+contain nonsensical or corrupt
+data.
+
+Feature bounds and non-finite
+NaN/Inf validation.
+
+( _validate_engineered_features() )
+
+The
+Mathematical
+Judge
+
+Estimating the exact statistical
+likelihood that the order is
+stolen.
+
+Frozen gradient-boosted decision
+tree inference.
+
+ml/models/candidate_lgbm_v1.pkl via
+predict_proba()
+
+The Explanatory
+Evidence
+
+Proving exactly which facts
+(amount, device, location)
+pushed the score up.
+
+Exact Shapley Additive
+exPlanations with additivity
+verification.
+
+ml/evaluation/explainability.py
+( RiskExplainer )
+
+The Risk
+Thermometer
+
+Translating the probability into a
+familiar 0–100 score for
+Ananya's eyes.
+
+Deterministic linear mapping and
+categorical bucketing.
+
+ml/evaluation/risk_scoring.py
+( score_transaction() )
+
+The Rulebook
+
+The five clear guidelines that
+say when to allow, step-up, or
+block.
+
+Ordered policy cascade
+evaluated on (probability,
+amount) .
+
+ml/evaluation/policy.py ( POLICY_RULES )
+
+The Permanent
+Ledger
+
+The secure filing cabinet
+recording every decision without
+storing personal data.
+
+SQLAlchemy SQLite store
+persisting decision facts without
+PII.
+
+backend/services/audit_service.py
+( AuditStore )
+
+Ananya's
+Dashboard
+
+The screen where Ananya
+reviews transactions, reasons,
+and audit logs.
+
+React 19 single-page application
+speaking HTTP/JSON.
+
+frontend/src/App.jsx
+
+Confidential / Razorpay AI Buildathon 2026
+
+ml/features/build_features.py
+
+backend/services/risk_service.py
+
+Page 12
+
+MerchantShield AI — Project Understanding & Technical Book
+
+4 TECH STACK AND WHAT EACH TECHNOLOGY DOES
+4.1 Master Technology Inventory & Architecture Map
+Every technology in MerchantShield AI was selected based on strict requirements of mathematical precision, execution determinism, and
+minimal operational overhead. The table below inventories every verified dependency across the backend, machine learning, frontend, and
+DevOps layers:
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 13
+
+MerchantShield AI — Project Understanding & Technical Book
+
+Technology /
+Tool
+
+Verified
+Version
+
+Architectural
+Category
+
+Python
+
+3.13
+(3.11+ req)
+
+NumPy
+
+2.4.4
+
+Primary Role in Repository
+
+Interacting Components
+
+Core Runtime
+
+Powers the entire backend API, ML
+training pipelines, feature engineering,
+and test suites.
+
+Interprets all backend and ML source code; hosts
+Uvicorn and pytest.
+
+Scientific
+Computing
+
+High-performance vectorized array
+operations; rolling sums; cumulative
+variance computations.
+
+ml/features/build_features.py ; fed by
+pandas series; consumed by LightGBM.
+
+pandas
+
+3.0.2
+
+Data
+Manipulation
+
+Dataframe structures for transaction
+event logs; chronological sorting;
+customer groupbys.
+
+ml/data/ , ml/features/ , and
+backend/services/risk_service.py .
+
+scikit-learn
+
+1.8.0
+
+Machine
+Learning Toolkit
+
+Baseline Logistic Regression;
+StandardScaler; PR-AUC and ROC-AUC
+evaluation metrics.
+
+ml/training/train_baseline.py and
+candidate model benchmarking.
+
+LightGBM
+
+4.7.0
+
+Gradient
+Boosted Trees
+
+The primary production model
+( candidate_lgbm_v1.pkl ); fast,
+leaf-wise tree inference.
+
+Trained in
+ml/training/train_candidates.py ; loaded
+via joblib in model_loader.py .
+
+SHAP
+
+0.52.0
+
+Model
+Explainability
+
+TreeExplainer computing exact,
+grounded Shapley values in log-odds
+margin space.
+
+ml/evaluation/explainability.py ; wraps
+LightGBM model; supplies API payload.
+
+SciPy
+
+1.17.1
+
+Advanced
+Mathematics
+
+Statistical distribution utilities and
+mathematical verification algorithms.
+
+Underpins scikit-learn metrics and model evaluation
+functions.
+
+FastAPI
+
+0.141.1
+
+Asynchronous
+Web API
+
+High-speed RESTful API gateway;
+dependency injection; automatic
+OpenAPI/Swagger generation.
+
+backend/main.py and
+backend/api/routes.py ; orchestrates services.
+
+2.13.4
+
+Data Validation &
+Typing
+
+Strict request/response schema
+validation; field type coercion;
+chronological validation.
+
+backend/schemas/transaction.py and
+
+ORM &
+Database Layer
+
+Object-Relational Mapping for audit log
+records; schema creation; declarative
+base models.
+
+communicates with SQLite database.
+
+Pydantic
+
+(v2)
+
+SQLAlchemy
+
+2.0.52
+
+backend/schemas/response.py .
+
+backend/services/audit_service.py ;
+
+SQLite
+
+3.x
+(embedded)
+
+Relational
+Persistence
+
+Zero-configuration, serverless, single-file
+relational database for audit trails.
+
+Stores backend/data/audit.db ; managed
+through SQLAlchemy sessions.
+
+Uvicorn
+
+0.52.4
+
+ASGI Web
+Server
+
+Lightning-fast ASGI web server hosting
+the FastAPI application process.
+
+Entry point for python -m uvicorn
+backend.main:app .
+
+React
+
+19.2.8
+
+Frontend UI
+Framework
+
+Single-page dashboard; dynamic
+scenario loading; reactive audit log
+tables and charts.
+
+frontend/src/App.jsx and component
+hierarchy in frontend/src/components/ .
+
+Vite
+
+8.2.0
+
+Frontend Tooling
+
+Ultra-fast development server with Hot
+Module Replacement; production ES
+bundle builder.
+
+Compiles React source into frontend/dist/ for
+same-origin backend serving.
+
+pytest
+
+9.1.1
+
+Testing
+Framework
+
+Executes 269 automated test cases
+across leakage, explainability, policy, and
+API boundaries.
+
+tests/conftest.py and test modules in
+tests/ .
+
+HTTPX
+
+0.28.1
+
+HTTP Client
+Library
+
+Underpins FastAPI's TestClient for
+end-to-end API integration and error-path
+tests.
+
+Used in tests/test_api.py to test REST
+endpoints without starting a live port.
+
+Docker
+
+Multi-stage
+
+Containerization
+
+Container build bundling Node 22
+(frontend builder) and Python 3.13-slim
+(runtime).
+
+Defined in Dockerfile and orchestrated via
+docker-compose.yml .
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 14
+
+MerchantShield AI — Project Understanding & Technical Book
+
+4.2 Python Ecosystem & Machine Learning Libraries
+Python 3.13: Modern Asynchronous & Typed Foundation
+MerchantShield AI utilizes Python 3.13 as its primary programming environment. Python was chosen because it represents the undisputed
+center of gravity for modern data science, statistical modeling, and scientific machine learning, while providing robust asynchronous web
+frameworks. The codebase adheres strictly to modern Python typing conventions (using
+
+dataclasses ,
+
+typing.Optional ,
+
+typing.Literal , and Pydantic models), ensuring static verification and maintainability.
+
+NumPy 2.4.4 & pandas 3.0.2: Leakage-Safe Behavioral Mathematics
+The feature engineering engine in ml/features/build_features.py is built upon NumPy and pandas. While pandas handles high-level
+customer partitioning via groupby("customer_id") , raw NumPy arrays are used to calculate rolling statistics without incurring pandas
+indexing overhead. Specifically:
+np.cumsum() and squared cumulative sums are concatenated with a leading 0.0 and sliced with [:-1] to compute running means and
+
+running standard deviations strictly on transactions prior to the current row index.
+np.divide(..., where=prior_count > 0) ensures division-by-zero errors are mathematically trapped, outputting safe 0.0 defaults for
+
+first-time customers.
+Vectorized timestamp integer arrays ( datetime64[s] ) compute trailing 5-minute, 30-minute, and 60-minute transaction velocities via
+pointer-sliding two-pointer loops in $O(N)$ time per customer.
+
+scikit-learn 1.8.0: Benchmarking & Metric Verification
+scikit-learn
+
+provides
+
+the
+
+foundation
+
+for
+
+the
+
+baseline
+
+model
+
+( LogisticRegression
+
+paired
+
+with
+
+StandardScaler
+
+in
+
+ml/training/train_baseline.py ) and all rigorous evaluation metrics across the project:
+precision_recall_curve and average_precision_score compute PR-AUC, the canonical metric for class-imbalanced fraud
+
+detection.
+confusion_matrix(..., labels=[0, 1]) extracts exact True Positive, False Positive, True Negative, and False Negative counts for
+
+feeding the asymmetric financial cost model.
+
+4.3 LightGBM & SHAP: The Dual Reasoning Engine
+LightGBM 4.7.0: High-Speed, Leaf-Wise Gradient Boosting
+LightGBM
+
+was
+
+selected
+
+over
+
+Random
+
+Forest
+
+and
+
+Deep
+
+Neural
+
+Networks
+
+as
+
+the
+
+primary
+
+production
+
+classifier
+
+( ml/models/candidate_lgbm_v1.pkl ). LightGBM utilizes histogram-based algorithms and leaf-wise (best-first) tree growth rather than depthwise growth, resulting in superior accuracy on non-linear tabular data with significantly faster training and inference times (under 5 milliseconds
+for a batch of 1,000 transactions).
+
+The Early Stopping Metric Bug & Its Fix (Phase 4 Engineering Record)
+During candidate model training, an insidious machine learning bug was uncovered: using eval_metric="average_precision" for early
+stopping caused LightGBM to prematurely halt training after iteration 1, resulting in probabilities capped near 0.35 and 0% recall.
+Root Cause Analysis: LightGBM's binary objective automatically evaluates binary_logloss alongside any custom metric. Under severe
+class imbalance (~1.5% fraud), our high scale_pos_weight=73.2 artificially inflates predicted-positive confidence, causing
+binary_logloss to deteriorate immediately—even while PR-AUC is rapidly climbing. By default, LightGBM requires all metrics to improve, so
+
+logloss vetoed training.
+The Fix: Configured eval_metric="auc" with callbacks=[lgb.early_stopping(stopping_rounds=50,
+first_metric_only=True)] . This decoupled early stopping from secondary metrics, allowing boosting to converge naturally at its optimum.
+
+SHAP 0.52.0: Exact Shapley Attributions with Additivity Checks
+Rather than relying on sampling approximations (such as KernelSHAP or LIME), MerchantShield AI deploys
+
+shap.TreeExplainer .
+
+TreeExplainer leverages the tree structure of LightGBM to calculate exact Shapley values in polynomial time $O(TLD^2)$.
+In ml/evaluation/explainability.py , SHAP decomposes the model's raw margin (log-odds) output:
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 15
+
+MerchantShield AI — Project Understanding & Technical Book
+
+margin = base_value + Σ shap_values[i]
+P(fraud) = 1.0 / (1.0 + exp(-margin))
+
+Every single call to RiskExplainer.explain() mathematically reconstructs the probability and asserts:
+abs(reconstructed_prob - raw_prob) < 1e-4
+
+If this additivity check fails, the system immediately flags
+
+additivity_check_passed=false , preventing corrupt or mismatched model
+
+explanations from reaching compliance audits.
+
+4.4 Backend API Stack: FastAPI, Pydantic v2 & Uvicorn
+The backend service is powered by FastAPI 0.141.1 and Pydantic 2.13.4 running on the Uvicorn ASGI server:
+Lifespan Management: In backend/main.py , an @asynccontextmanager lifespan loads the frozen LightGBM model, warms up the
+SHAP TreeExplainer, and connects the SQLite audit store exactly once during application startup. If the model artifact is missing, the service
+starts in a degraded state so /health can report the issue rather than crashing the operating system process.
+Strict Pydantic Validation: In backend/schemas/transaction.py , custom validators enforce that transaction amounts are positive
+( gt=0 ), identifiers are non-empty strings, payment methods match permitted enums, and all prior_transactions have timestamps
+strictly before the transaction being evaluated.
+Exception Sanitization: Global handlers in main.py intercept validation errors and unhandled exceptions, converting internal Python
+tracebacks into sanitized, structured JSON error bodies (status 422 and 500) to prevent internal system leakage.
+
+4.5 Persistence & Governance: SQLAlchemy & SQLite
+The governance tier utilizes SQLAlchemy 2.0 with a local SQLite 3 embedded database ( backend/data/audit.db ):
+Single-File, Serverless Architecture: Ideal for self-contained buildathon evaluation and edge deployments without external database
+daemon dependencies.
+Deliberate PII Omission: To adhere to privacy-by-design standards, the audit table intentionally omits customer_id , device_id , and
+geo_region . It persists only the decision facts (transaction ID, probability, threshold, risk score, action, rule ID, and SHAP top reasons).
+
+V2 Idempotent Schema Migration: In backend/services/audit_service.py , the
+_migrate_add_prior_transaction_count_if_needed() method executes a raw SQLite PRAGMA check on startup to dynamically add
+
+the prior_transaction_count column to pre-existing databases without requiring alembic or dropping data.
+
+4.6 Frontend Architecture: React 19, Vite & Vanilla CSS
+The analyst dashboard is built with React 19.2 and bundled using Vite 8.2:
+Strict Decoupling: The frontend contains zero Python imports and zero duplicated business logic. It interacts with the backend strictly via
+standard HTTP/JSON fetch calls in frontend/src/api/client.js .
+Design System Tokens: Styled using Vanilla CSS tokens ( frontend/src/styles/tokens.css and App.css ). Avoiding bulky CSS
+frameworks (like Tailwind or Bootstrap) guarantees zero dependency bloat, pristine load speeds, and full design flexibility.
+Dual-Call Pattern: When evaluating a transaction, the frontend executes Promise.all([api.evaluateTransaction(),
+api.explainTransaction()]) to simultaneously fetch the authoritative decision record and the full per-feature SHAP contribution bars for
+
+rendering.
+
+4.7 Verification & DevOps: pytest & Multi-Stage Docker
+Automated Testing: pytest 9.1 executes 269 automated tests covering leakage proof, decision policy boundary conditions, SHAP
+mathematical additivity, API failure recovery, and V2 hardening.
+Multi-Stage Containerization: The project's Dockerfile uses a multi-stage pattern: Stage 1 builds the React frontend using node:22slim ; Stage 2 copies the compiled static assets into a python:3.13-slim environment, installs Python wheels, pre-generates the
+
+synthetic dataset, and serves both frontend and API from a unified single container origin.
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 16
+
+MerchantShield AI — Project Understanding & Technical Book
+
+5 CODEBASE EXPLORATION: EVERY IMPORTANT FILE AND FOLDER
+5.1 Complete Repository Directory Tree
+The MerchantShield AI repository is organized into distinct, decoupled domains covering backend APIs, machine learning pipelines, evaluation
+modules, external datasets, frontend UI, automated tests, and documentation:
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 17
+
+MerchantShield AI — Project Understanding & Technical Book
+
+merchantshield-ai/
+├── .github/workflows/
+│
+└── ci.yml
+├── backend/
+
+# GitHub Actions: multi-job CI (Python 3.13 + Node 22)
+# FastAPI Application & Services
+
+│
+│
+
+├── api/
+│
+├── __init__.py
+
+│
+│
+│
+
+│
+└── routes.py
+├── config/
+│
+├── __init__.py
+
+# 6 API route handlers (/health, /risk/evaluate, etc.)
+
+│
+│
+
+│
+└── settings.py
+├── data/
+
+# Path constants, titles, versions (no policy rules)
+
+│
+│
+│
+
+│
+└── audit.db
+├── schemas/
+│
+├── __init__.py
+
+# SQLite database file (created on runtime)
+
+│
+│
+
+│
+│
+
+# Pydantic response models (Health, RiskEvaluate, etc.)
+# Pydantic request models (RiskRequest, TransactionInput)
+
+│
+│
+
+├── services/
+│
+├── __init__.py
+
+│
+│
+│
+
+│
+│
+│
+
+│
+│
+
+├── __init__.py
+└── main.py
+
+├── response.py
+└── transaction.py
+
+├── audit_service.py
+├── model_loader.py
+└── risk_service.py
+
+├── docs/
+│
+├── api.md
+
+# SQLAlchemy AuditStore with idempotent schema migration
+# One-time startup model & explainer artifact loader
+# Pipeline orchestrator & V2 hardening bounds checker
+# FastAPI lifespan, CORS, error handlers, static mount
+# Comprehensive System Architecture & Experiment Reports
+# Complete API contract and error specification
+
+│
+│
+│
+
+├── decision_engine.md
+# Rationale for rule-based decisioning & boundary tests
+├── explainability.md
+# SHAP TreeExplainer mathematics & grounding rules
+├── external_validation_ieee_cis.md # IEEE-CIS dataset provenance & Experiment A/B results
+
+│
+│
+
+├── frontend.md
+# Dashboard decoupling & scenario verification
+├── phase15_card_product_experiment.md # Ablation study for card_product_share feature
+
+│
+│
+
+├── phase17_razorpay_real_data_validation.md # Canonical held-out real data evaluation
+└── README.md
+# Documentation index and review order
+
+├── frontend/
+│
+├── src/
+│
+│
+├── api/
+
+# React 19 / Vite Single-Page Dashboard
+
+│
+│
+
+│
+│
+
+│
+└── client.js
+├── components/
+
+# Fetch API client (zero backend Python dependencies)
+
+│
+│
+│
+
+│
+│
+│
+
+│
+│
+│
+
+├── AuditLogTable.jsx
+# Real-time tabular display of persisted decisions
+├── ErrorBanner.jsx
+# Clean error notification banner
+├── ExplanationPanel.jsx # SHAP grounded reasons & contribution bar charts
+
+│
+│
+
+│
+│
+
+│
+│
+
+├── ModelInfoPanel.jsx
+├── RiskResultCard.jsx
+
+# Frozen threshold & test set metrics viewer
+# Action badge (BLOCK/ALLOW) & 0-100 score gauge
+
+│
+│
+
+│
+│
+
+│
+│
+
+├── StatusBar.jsx
+└── TransactionForm.jsx
+
+# API liveness & model load readiness indicator
+# Scenario selector & manual transaction editor
+
+│
+│
+│
+
+│
+│
+│
+
+├── data/
+│
+└── sampleScenarios.js
+├── styles/
+
+# 4 demo scenarios (LOW, MEDIUM, HIGH, CRITICAL)
+
+│
+│
+
+│
+│
+
+│
+│
+
+# Dashboard layout, cards, and responsive styles
+# Vanilla CSS custom properties (colors, typography)
+
+│
+│
+
+│
+│
+
+├── utils/
+│
+└── presentation.js
+
+│
+│
+│
+
+│
+├── App.jsx
+│
+└── main.jsx
+├── index.html
+
+# Root React component orchestrating dashboard state
+# React DOM mount point
+# HTML5 template
+
+│
+│
+
+├── package.json
+└── vite.config.js
+
+# Node dependencies (React 19, Vite, Oxlint)
+# Vite build and proxy configuration
+
+├── App.css
+└── tokens.css
+
+├── ml/
+│
+├── data/
+│
+│
+└── generate_synthetic.py
+
+# Color mappers and human-readable formatting
+
+# Machine Learning Research, Training & Evaluation
+# Synthetic generator (~213k txns, 2,200 users, 1.5% fraud)
+
+│
+│
+
+├── evaluation/
+│
+├── cost_model.py
+
+# Asymmetric FP/FN financial loss objective formulation
+
+│
+│
+
+│
+│
+
+├── decision_engine.py
+├── demo_decision.py
+
+# make_decision() and DecisionRecord dataclass
+# Verification demo of policy decision outputs
+
+│
+│
+│
+
+│
+│
+│
+
+├── demo_explain.py
+├── explainability.py
+├── policy.py
+
+# Verification demo of SHAP explainability outputs
+# RiskExplainer (TreeExplainer + additivity check)
+# 5-rule deterministic policy table & boundary logic
+
+│
+│
+
+│
+│
+
+├── risk_scoring.py
+└── threshold_analysis.py
+
+# Continuous probability to 0-100 score & tier mapping
+# Cost-minimizing validation threshold sweep
+
+│
+│
+
+├── external/
+│
+└── ieee/
+
+│
+│
+│
+
+│
+│
+│
+
+├── card_product_features.py # Phase 15 card_product_share feature extractor
+├── experiment_a_frozen.py
+# Evaluates frozen synthetic model on IEEE-CIS
+├── experiment_b_retrain.py # Retrains LightGBM on IEEE-CIS training split
+
+│
+
+│
+
+├── ieee_adapter.py
+
+Confidential / Razorpay AI Buildathon 2026
+
+# External Real-World Validation Track (IEEE-CIS)
+
+# Maps raw IEEE-CIS columns to MerchantShield schema
+
+Page 18
+
+MerchantShield AI — Project Understanding & Technical Book
+
+│
+│
+
+│
+│
+
+├── ieee_features.py
+├── ieee_split.py
+
+# Leakage-safe feature extraction for IEEE-CIS
+# Chronological 182-day train/val/test splitter
+
+│
+│
+
+│
+└── razorpay_validation.py
+├── features/
+
+│
+│
+
+│
+└── build_features.py
+├── models/
+
+# 15 strictly-prior features computed on event logs
+
+│
+│
+│
+
+│
+│
+│
+
+├── baseline_logreg_v1.pkl
+├── candidate_lgbm_v1.pkl
+├── candidate_rf_v1.pkl
+
+# Fitted Logistic Regression baseline artifact
+# Frozen LightGBM production model artifact
+# Fitted Random Forest candidate artifact
+
+│
+│
+
+│
+│
+
+├── lgbm_v1_metadata.json
+# Committed metadata (threshold, val/test metrics)
+├── threshold_analysis_chart.png # Validation precision/recall/cost sweep plot
+
+│
+│
+│
+
+│
+└── threshold_sweep_validation.csv # CSV log of threshold sweep metrics
+└── training/
+├── train_baseline.py
+# Trains baseline Logistic Regression & chronological_split
+
+# Phase 17 canonical held-out real data evaluation
+
+│
+└── train_candidates.py
+├── screenshots/
+
+# Benchmarks RF & LightGBM candidates vs baseline
+
+│
+└── README.md
+├── tests/
+
+# Capture guide for UI screenshots (none fabricated)
+# 269 Automated pytest Test Cases
+
+│
+│
+│
+
+├── conftest.py
+# Pytest fixtures (sample payloads, mock models)
+├── test_api.py
+# API contract, status codes, audit isolation tests
+├── test_card_product_features.py # 35 unit tests verifying card_product_share
+
+│
+│
+
+├── test_decision_engine.py
+├── test_explainability.py
+
+# 51 tests: policy branches, boundaries, fail-safes
+# SHAP additivity checks, grounding & determinism
+
+│
+│
+
+├── test_ieee_external.py
+├── test_no_leakage.py
+
+# IEEE-CIS adapter, prohibited columns, leakage tests
+# Validates strictly-prior feature logic on 213k rows
+
+│
+├── test_phase17_validation.py
+│
+└── test_v2_hardening.py
+├── CONTRIBUTING.md
+
+# Phase 17 pipeline contract & threshold selection tests
+# Feature bounds, probability validation & migration tests
+# Developer guidelines & ML integrity rules
+
+├── docker-compose.yml
+├── Dockerfile
+
+# Multi-container orchestration (FastAPI + Audit volume)
+# Multi-stage production container build definition
+
+├── README.md
+└── requirements.txt
+
+# Master repository documentation & project summary
+# Pinned Python dependencies (NumPy, LightGBM, etc.)
+
+5.2 Folder-by-Folder Structural Overview
+backend/ : Encapsulates the application server. Divided into api/ (REST endpoint declarations), schemas/ (strict Pydantic contracts),
+config/ (global constants and project paths), and services/ (business logic, model artifact caching, and persistence).
+ml/ : Contains all machine learning research, data synthesis, feature engineering, and model training code. Divided into data/ (raw
+
+transaction generator), features/ (feature transformation), training/ (model training scripts), evaluation/ (cost models, threshold
+sweep, decision engine, explainability), models/ (frozen binary artifacts and serialized JSON metadata), and external/ (IEEE-CIS
+research track).
+frontend/ : Houses the React 19 single-page application. Features a modular component hierarchy ( components/ ), static scenario
+
+definitions ( data/ ), and zero-dependency Vanilla CSS tokens ( styles/ ).
+docs/ : Comprehensive technical monographs, API contracts, architectural design decisions, and external validation experiment reports.
+tests/ : Robust test suite comprising 269 automated test cases covering every mathematical invariant, boundary condition, API status
+
+code, and defensive failure path.
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 19
+
+MerchantShield AI — Project Understanding & Technical Book
+
+5.3 File-by-File Technical Reference Inventory
+Relative File Path
+
+Primary Responsibility & Key Definitions
+
+Inputs & Outputs
+
+Pipeline
+Participation
+
+backend/main.py
+
+FastAPI application entry point;
+lifespan context manager; global error
+handlers; static asset mounting.
+
+In: App config; Out:
+Running ASGI application
+process.
+
+Stage 1
+(Bootstrapping) &
+Stage 9 (Delivery)
+
+backend/config/settings.py
+
+Centralizes file paths, API title, version, and
+SQLite DB URL. Deliberately omits policy
+numbers.
+
+In: Environment; Out: Path
+and service constants.
+
+Global
+configuration
+across all
+backend modules.
+
+backend/api/routes.py
+
+Implements 6 REST routes: /health ,
+/model/info , /risk/score ,
+
+In: RiskRequest ; Out:
+Strongly typed Pydantic
+responses.
+
+Stage 2 (Request)
+& Stage 9
+(Response)
+
+/risk/explain , /risk/evaluate ,
+/audit-log .
+backend/schemas/transaction.py
+
+Declares TransactionInput and
+RiskRequest . Validates positive
+amounts, non-blank strings, and strictlyprior timestamps.
+
+In: Raw JSON body; Out:
+Validated Python Pydantic
+objects.
+
+Stage 2: Request
+Validation
+
+backend/schemas/response.py
+
+Defines response models:
+HealthResponse ,
+ModelInfoResponse ,
+RiskScoreResponse ,
+
+In: Service results; Out:
+Validated JSON schemas.
+
+Stage 9:
+Response
+Assembly
+
+Wires feature engineering, model inference,
+V2 bounds checking, SHAP explainability,
+and policy evaluation.
+
+In: ModelBundle ,
+
+Stages 3, 4, 5, 6,
+and 7
+orchestration.
+
+Loads candidate_lgbm_v1.pkl and
+constructs RiskExplainer once at
+startup. Defines ModelBundle .
+
+In: Pickle/JSON paths;
+Out: In-memory cached
+ModelBundle .
+
+Stage 1: System
+Bootstrapping
+
+backend/services/audit_service.py
+
+SQLAlchemy AuditStore ; records
+decisions; executes idempotent V2 SQLite
+column migrations; omits PII.
+
+In: DecisionRecord ,
+reasons; Out: Persisted
+SQLite rows.
+
+Stage 8: Audit
+Persistence
+
+ml/features/build_features.py
+
+Computes 15 strictly-prior behavioral
+features (velocity, z-scores, device/geo
+novelty) without leakage.
+
+In: Raw transaction
+DataFrame; Out: 15feature DataFrame.
+
+Stage 3: Feature
+Engineering
+
+ml/evaluation/policy.py
+
+Declares DECISION_THRESHOLD=0.40 ,
+
+In: (probability,
+
+CRITICAL_MIN=0.80 , and
+POLICY_RULES (5-rule ordered table).
+
+amount) ; Out: Triggered
+PolicyRule .
+
+Stage 7: Policy
+Evaluation
+
+ml/evaluation/decision_engine.py
+
+Encapsulates make_decision() and
+DecisionRecord . Enforces structural
+isolation of SHAP explanations.
+
+In: Probability, amount, ID;
+Out: Immutable
+DecisionRecord .
+
+Stage 7: Decision
+Engine
+
+ml/evaluation/explainability.py
+
+RiskExplainer wraps
+shap.TreeExplainer ; checks
+
+In: Feature Series; Out:
+Contributions & grounded
+reasons.
+
+Stage 6:
+Explainability
+Layer
+
+RiskEvaluateResponse .
+backend/services/risk_service.py
+
+backend/services/model_loader.py
+
+mathematical additivity; formats grounded
+narrative text.
+
+RiskRequest ; Out:
+Decision & explanation
+tuple.
+
+ml/evaluation/risk_scoring.py
+
+Deterministic mapping of probability to 0–
+100 integer score and categorical tier
+(LOW/MED/HIGH/CRIT).
+
+In: Float probability; Out:
+Score & category dict.
+
+Informational
+display across
+Stages 5–9.
+
+ml/evaluation/cost_model.py
+
+Formulates expected cost: (FP × 50) +
+Σ(FN × 0.5 × amount) .
+
+In: True/pred arrays,
+amounts; Out: Expected
+rupee cost breakdown.
+
+Used in training
+and validation
+threshold
+analysis.
+
+ml/evaluation/threshold_analysis.py
+
+Sweeps validation thresholds (0.05 to
+0.95); selects 0.40 as cost minimum subject
+to ≥80% recall.
+
+In: Validation probabilities;
+Out: Frozen threshold &
+chart.
+
+Threshold
+selection & model
+governance.
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 20
+
+MerchantShield AI — Project Understanding & Technical Book
+
+Pipeline
+Participation
+
+Relative File Path
+
+Primary Responsibility & Key Definitions
+
+Inputs & Outputs
+
+ml/external/ieee/razorpay_validation.py
+
+Canonical Phase 17 held-out real data
+evaluation on IEEE-CIS chargeback
+dataset.
+
+In: IEEE-CIS CSVs; Out:
+Precision/Recall/Cost on
+test split.
+
+External real-data
+validation track.
+
+frontend/src/App.jsx
+
+Root React component managing liveness
+status, scenario loading, dual endpoint
+calls, and UI state.
+
+In: User interaction; Out:
+Rendered DOM elements.
+
+Client
+Presentation Tier.
+
+5.4 Critical File Deep Dives & Code Walkthroughs
+5.4.1 backend/main.py : Lifespan & Degradation Handling
+The main entry point manages the lifecycle of the FastAPI process. The lifespan context manager initializes expensive objects exactly once:
+# backend/main.py (lines 32-50)
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+try:
+app.state.model_bundle = load_model_bundle(settings.MODEL_PATH, settings.MODEL_METADATA_PATH)
+logger.info(f"Model loaded from {{settings.MODEL_PATH}}")
+except ModelUnavailableError as e:
+# Do not crash the process -- come up degraded so /health reports it clearly
+logger.error(f"MODEL FAILED TO LOAD: {{e}}")
+app.state.model_bundle = None
+try:
+app.state.audit_store = AuditStore(settings.AUDIT_DB_URL, settings.AUDIT_DB_DIR)
+logger.info(f"Audit store ready at {{settings.AUDIT_DB_PATH}}")
+except Exception as e:
+logger.error(f"AUDIT STORE FAILED TO INITIALIZE: {{e}}")
+app.state.audit_store = None
+yield
+
+Architectural Rationale: Rather than allowing an unhandled exception to crash the Python container during startup (which results in opaque
+Docker crash loops), attaching model_bundle = None allows the HTTP process to start. Orchestration systems (Kubernetes, AWS ECS) can
+query /health , receive status: "degraded", model_loaded: false , and handle alerting gracefully, while /risk/evaluate returns an
+explicit HTTP 503 Service Unavailable.
+
+5.4.2 backend/schemas/transaction.py : Strict Prior History Validation
+Pydantic model validators guarantee that callers cannot accidentally pass corrupt data or future transactions as historical context:
+# backend/schemas/transaction.py (lines 78-100)
+@model_validator(mode="after")
+def _prior_transactions_must_be_valid_context(self):
+txn = self.transaction
+for i, prior in enumerate(self.prior_transactions):
+if prior.customer_id != txn.customer_id:
+raise ValueError(
+f"prior_transactions[{{i}}].customer_id does not match transaction.customer_id"
+)
+if prior.timestamp >= txn.timestamp:
+raise ValueError(
+f"prior_transactions[{{i}}].timestamp ({{prior.timestamp}}) is not strictly "
+f"before transaction.timestamp ({{txn.timestamp}}) -- leaks future data!"
+)
+if prior.transaction_id == txn.transaction_id:
+raise ValueError(f"Transaction cannot be its own prior context.")
+return self
+
+Architectural Rationale: If a payment gateway mistakenly included the transaction currently being evaluated inside the prior_transactions
+array, the rolling velocity and z-score calculations would double-count the transaction and leak its existence into its own baseline. This validator
+rejects such requests with HTTP 422 before the feature pipeline executes.
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 21
+
+MerchantShield AI — Project Understanding & Technical Book
+
+5.4.3 ml/features/build_features.py : Strictly-Prior Vectorized Statistics
+To prevent data leakage, cumulative sums are shifted by one index so that a transaction at index i only sees transactions 0 through i-1 :
+# ml/features/build_features.py (lines 36-48)
+prior_count = np.arange(n) # 0 for first transaction
+amounts = g["amount"].values
+# expanding mean/std computed strictly on values BEFORE current index
+cum_sum = np.concatenate(([0.0], np.cumsum(amounts)[:-1]))
+cum_sum_sq = np.concatenate(([0.0], np.cumsum(amounts ** 2)[:-1]))
+prior_mean = np.divide(cum_sum, prior_count, out=np.zeros(n), where=prior_count > 0)
+prior_var = np.divide(cum_sum_sq, prior_count, out=np.zeros(n), where=prior_count > 0) - prior_mean ** 2
+prior_var = np.clip(prior_var, a_min=0, a_max=None)
+prior_std = np.sqrt(prior_var)
+# Require at least 3 prior transactions before computing statistical z-score
+amount_zscore = np.where(
+prior_count >= 3,
+(amounts - prior_mean) / np.where(prior_std > 1e-6, prior_std, 1.0),
+0.0
+)
+
+Architectural Rationale: The z-score quantifies how anomalous the current purchase amount is relative to the customer's typical spending.
+Requiring prior_count >= 3 avoids calculating volatile standard deviations on sample sizes of one or two purchases, outputting a safe
+neutral 0.0 until an established pattern emerges.
+
+5.4.4 ml/evaluation/policy.py : The 5-Rule Cascade
+The policy engine evaluates rules in strict order, with the first match determining the action:
+# ml/evaluation/policy.py (lines 50-98)
+POLICY_RULES = [
+PolicyRule(
+rule_id="CRITICAL_BLOCK",
+action="BLOCK",
+reason="Fraud probability >= 0.80 where validation precision is 94.1%.",
+condition=lambda p, amt: p >= CRITICAL_MIN, # 0.80
+),
+PolicyRule(
+rule_id="HIGH_STEP_UP",
+action="STEP_UP_VERIFICATION",
+reason="Fraud probability >= 0.40 (cost-optimal decision threshold).",
+condition=lambda p, amt: p >= DECISION_THRESHOLD,
+),
+PolicyRule(
+
+# 0.40
+
+rule_id="MEDIUM_AMOUNT_ESCALATION",
+action="STEP_UP_VERIFICATION",
+reason="Probability elevated (>=0.15) and amount >= Rs25,000.",
+condition=lambda p, amt: p >= LOW_MAX and amt >= LARGE_AMOUNT_CUTOFF,
+),
+PolicyRule(
+rule_id="MEDIUM_MONITOR",
+action="ALLOW_WITH_MONITORING",
+reason="Probability elevated (>=0.15) but below decision threshold.",
+condition=lambda p, amt: p >= LOW_MAX,
+),
+PolicyRule(
+rule_id="LOW_ALLOW",
+action="ALLOW",
+reason="Fraud probability < 0.15; zero friction warranted.",
+condition=lambda p, amt: True, # catch-all
+),
+]
+
+Architectural Rationale: The signature of evaluate_policy(probability: float, amount: float) is structurally incapable of accepting
+SHAP explanations. This ensures that SHAP explanations can never subtly alter transaction decisions, guaranteeing auditable compliance.
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 22
+
+MerchantShield AI — Project Understanding & Technical Book
+
+5.4.5 backend/services/risk_service.py : V2 Production Hardening
+In V2, defensive guardrails intercept inputs and model outputs before downstream consumers are invoked:
+# backend/services/risk_service.py (lines 133-159)
+def _validate_model_probability(probability: float) -> float:
+if math.isnan(probability):
+raise ModelOutputError("Model produced NaN probability; prediction invalid.")
+if math.isinf(probability):
+raise ModelOutputError(f"Model produced infinite probability ({{probability}}).")
+if not (0.0 <= probability <= 1.0):
+raise ModelOutputError(f"Probability out of range ({{probability}}); must be in [0, 1].")
+return probability
+
+Similarly, _validate_engineered_features() checks that velocity_60min <= 1000 and amount_zscore is finite, catching corrupt data
+(such as 500 identical synthetic transactions submitted in a single millisecond) before LightGBM performs out-of-distribution inference.
+
+5.5 File Dependency & Runtime Execution Graph
+Origin Module
+
+Import Dependencies
+(Static)
+
+Runtime Call Relationship (Dynamic)
+
+Data Transferred
+
+settings ,
+model_loader ,
+audit_service ,
+routes
+
+Executes load_model_bundle()
+and initializes AuditStore .
+
+Instantiates
+app.state.model_bundle
+
+backend/api/routes.py
+
+schemas ,
+risk_service ,
+audit_service ,
+decision_engine
+
+Calls
+risk_service.evaluate_full()
+and
+audit_store.record_decision() .
+
+Transfers validated
+RiskRequest ; returns
+RiskEvaluateResponse .
+
+backend/services/risk_service.py
+
+build_features ,
+explainability ,
+decision_engine ,
+policy
+
+Calls build_features() ,
+predict_proba() ,
+make_decision() , explain() .
+
+Marshals raw dicts →
+DataFrame → float probability
+→ DecisionRecord .
+
+ml/evaluation/decision_engine.py
+
+policy ,
+
+Calls score_transaction(prob)
+
+risk_scoring
+
+and evaluate_policy(prob,
+amt) .
+
+Packages pure numeric outputs
+into an immutable
+DecisionRecord .
+
+sqlalchemy ,
+json , sqlite3
+
+Executes SQLite PRAGMA table info;
+inserts AuditLogEntry into
+audit.db .
+
+backend/main.py
+
+backend/services/audit_service.py
+
+Confidential / Razorpay AI Buildathon 2026
+
+and audit_store .
+
+Persists decision facts and
+serialized JSON SHAP strings.
+
+Page 23
+
+MerchantShield AI — Project Understanding & Technical Book
+
+6 ARCHITECTURE, DATABASE DESIGN, AND API DESIGN
+6.1 Conceptual Architecture & Component Responsibilities
+MerchantShield AI operates on a modern, four-tier architecture designed to maintain strict boundaries between statistical estimation, display
+presentation, operational governance, and client rendering.
+The system components and their isolated responsibilities are:
+Presentation Tier (React 19 / Vite): Renders the web dashboard. Consumes the backend API purely via asynchronous JSON HTTP
+requests. It contains no business logic, no policy rules, and zero Python dependencies.
+API & Validation Gateway (FastAPI / Pydantic v2): Enforces strict structural boundaries on incoming requests. Validates data types, rejects
+negative amounts or blank strings, and guarantees that historical context transactions belong to the same customer and possess timestamps
+strictly prior to the current transaction.
+Feature Engineering & ML Intelligence (NumPy / LightGBM / SHAP): Marshals raw transaction event streams into 15 strictly-prior
+behavioral features, executes gradient-boosted tree inference using a frozen model artifact ( candidate_lgbm_v1.pkl ), and decomposes
+model log-odds into exact Shapley values.
+Governance & Policy Tier (Decision Engine / SQLite): Evaluates an ordered five-rule cascade to map (probability, amount) to
+bounded action recommendations, recording the immutable decision facts into an isolated SQLite audit log.
+
+6.2 Database & Storage Design: The SQLite Audit Store
+MerchantShield AI utilizes a single, serverless SQLite relational database ( backend/data/audit.db ) managed through SQLAlchemy 2.0
+ORM.
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 24
+
+MerchantShield AI — Project Understanding & Technical Book
+
+SQLite Audit Log Entity Design (backend/data/audit.db)
+Defensive governance storage: Durably preserves WHAT & WHY while strictly omitting customer PII
+
+TABLE: audit_log
+
+SQLAlchemy Model: AuditLogEntry
+
+COLUMN NAME
+
+SQL TYPE
+
+INDEX / NULL
+
+GOVERNANCE PURPOSE
+
+id
+
+INTEGER
+
+PRIMARY KEY
+
+Auto-increment row ID
+
+request_id
+
+VARCHAR(64)
+
+INDEXED, NOT NULL
+
+UUID4 API transaction trace ID
+
+transaction_id
+
+VARCHAR(64)
+
+INDEXED, NOT NULL
+
+Merchant transaction identifier
+
+model_version
+
+VARCHAR(32)
+
+NOT NULL
+
+Frozen model identifier ("lgbm_v1")
+
+fraud_probability
+
+FLOAT
+
+NOT NULL
+
+Raw predicted probability [0.0 - 1.0]
+
+threshold
+
+FLOAT
+
+NOT NULL
+
+Cost-optimal boundary (0.40)
+
+risk_score / category
+
+INTEGER / VARCHAR
+
+NOT NULL
+
+0-100 score + LOW/MED/HIGH/CRIT
+
+action
+
+VARCHAR(32)
+
+NOT NULL
+
+ALLOW / STEP_UP / BLOCK
+
+policy_rule_id / reason
+
+VARCHAR / TEXT
+
+NOT NULL
+
+Exact rule triggered & rationale text
+
+top_reasons_json
+
+TEXT
+
+NULLABLE
+
+Separated SHAP explanation JSON
+
+source / prior_txn_count
+
+VARCHAR / INTEGER
+
+NOT NULL
+
+Origin ("demo"|"manual") & V2 context
+
+created_at
+
+DATETIME
+
+NOT NULL
+
+Record persistence timestamp (UTC)
+
+DELIBERATELY OMITTED FROM AUDIT STORAGE:
+• customer_id, device_id, geo_region, payment_method, merchant_id, account_created
+Rationale: Audit trail's purpose is to prove what the RISK SYSTEM decided and why, avoiding merchant PII duplication.
+
+Figure 6.1: SQLite Database Entity Design (audit_log table) with Explicit Privacy and Governance Separation.
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 25
+
+MerchantShield AI — Project Understanding & Technical Book
+
+Schema Specification: The audit_log Table
+Column Name
+
+SQL Type
+
+Nullability / Index
+
+Description & Governance Rationale
+
+id
+
+INTEGER
+
+PRIMARY KEY,
+AUTOINCREMENT
+
+Unique autoincrementing record sequence identifier.
+
+request_id
+
+VARCHAR(64)
+
+NOT NULL, INDEXED
+
+UUID4 generated per API call, allowing distributed log tracing
+across systems.
+
+transaction_id
+
+VARCHAR(64)
+
+NOT NULL, INDEXED
+
+Merchant transaction identifier being audited. Fast lookup index.
+
+model_version
+
+VARCHAR(32)
+
+NOT NULL
+
+Identifies the model artifact used (e.g., "lgbm_v1" ), ensuring
+model version reproducibility.
+
+fraud_probability
+
+FLOAT
+
+NOT NULL
+
+Raw predicted probability [0.0, 1.0] from the LightGBM
+model.
+
+threshold
+
+FLOAT
+
+NOT NULL
+
+The cost-optimal decision threshold in effect at decision time
+( 0.40 ).
+
+risk_score
+
+INTEGER
+
+NOT NULL
+
+Continuous 0–100 risk score generated for human readability.
+
+risk_category
+
+VARCHAR(16)
+
+NOT NULL
+
+Human tier: LOW , MEDIUM , HIGH , or CRITICAL .
+
+action
+
+VARCHAR(32)
+
+NOT NULL
+
+The bounded action recommended: ALLOW ,
+ALLOW_WITH_MONITORING , STEP_UP_VERIFICATION ,
+BLOCK .
+
+policy_rule_id
+
+VARCHAR(64)
+
+NOT NULL
+
+The exact policy rule that fired (e.g., "CRITICAL_BLOCK" or
+"HIGH_STEP_UP" ).
+
+policy_reason
+
+TEXT
+
+NOT NULL
+
+Verbatim business rationale for the triggered rule, ensuring
+regulatory auditability.
+
+decision_timestamp
+
+VARCHAR(64)
+
+NOT NULL
+
+ISO-8601 timestamp of the decision computation.
+
+top_reasons_json
+
+TEXT
+
+NULLABLE
+
+Serialized JSON array of grounded SHAP explanation strings.
+
+source
+
+VARCHAR(16)
+
+NOT NULL, DEFAULT
+'manual'
+
+Request origin: "demo" for dashboard scenarios or "manual"
+for API callers.
+
+prior_transaction_count
+
+INTEGER
+
+NOT NULL, DEFAULT 0
+
+V2: Contextual count of prior transactions supplied for behavioral
+analysis.
+
+created_at
+
+DATETIME
+
+NOT NULL
+
+Database record insertion timestamp (UTC).
+
+Governance Principles: Decision Facts vs. Explanations & PII Omission
+The storage design embodies two vital privacy and governance invariants:
+1. Separation of Durable Decision Facts from Derived Narratives: The hard facts that govern the transaction (probability, rule ID, threshold,
+action) are stored in discrete, indexed columns. The human-readable narrative is stored alongside in top_reasons_json as explanatory
+context. This prevents UI narrative updates from ever mutating underlying audit facts.
+2. Strict Omission of Customer PII: The database intentionally stores no customer primary account numbers (PAN), customer names, device
+fingerprints, or geographic regions. The audit trail's sole responsibility is to prove what the risk decisioning system evaluated and
+recommended, avoiding unnecessary duplication of sensitive customer data outside core merchant ledgers.
+3. V2 Idempotent Schema Migration: In existing deployments where audit_log was created under V1, SQLAlchemy's standard
+create_all() does not alter existing tables. In backend/services/audit_service.py , the
+_migrate_add_prior_transaction_count_if_needed() method executes an idempotent raw SQL check:
+
+cursor.execute("PRAGMA table_info(audit_log)")
+columns = {row[1] for row in cursor.fetchall()}
+if "prior_transaction_count" not in columns:
+cursor.execute("ALTER TABLE audit_log ADD COLUMN prior_transaction_count INTEGER DEFAULT 0")
+
+This guarantees seamless in-place schema upgrades without downtime or data loss.
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 26
+
+MerchantShield AI — Project Understanding & Technical Book
+
+6.3 API & Interface Design: The Six Endpoints
+MerchantShield AI exposes six documented REST endpoints via FastAPI:
+HTTP
+Method
+
+Route Path
+
+Operation Purpose
+
+Key Request
+Parameters
+
+Success Response Model
+
+Audit
+Persistence
+
+GET
+
+/health
+
+Liveness and readiness check;
+reports model load status.
+
+None
+
+HealthResponse
+
+No
+
+GET
+
+/model/info
+
+Static frozen model metadata,
+threshold, and metrics.
+
+None
+
+ModelInfoResponse
+
+No
+
+POST
+
+/risk/score
+
+Lightweight scoring: probability and
+0–100 score only.
+
+RiskRequest
+body
+
+RiskScoreResponse
+
+No
+
+POST
+
+/risk/explain
+
+Inference plus full SHAP feature
+contributions and reasons.
+
+RiskRequest
+body
+
+RiskExplainResponse
+
+No
+
+POST
+
+/risk/evaluate
+
+Full Pipeline: Score + Explain + 5Rule Decision + Audit.
+
+RiskRequest
+body
+
+RiskEvaluateResponse
+
+Yes
+
+GET
+
+/audit-log
+
+Retrieves recent persisted decision
+records (default 50).
+
+limit: int =
+50
+
+List[AuditEntry]
+
+No (Read-only)
+
+Endpoint Isolation & Failure Recovery Rationale
+Why does the system provide three separate POST endpoints?
+/risk/score and /risk/explain are explicitly designed for interactive exploration, high-throughput batch simulation, and what-if
+
+analysis. They never write to the audit log, ensuring test simulations do not pollute legal compliance records.
+/risk/evaluate is the single authoritative entry point for operational decisions. It executes the full decision engine and attempts an audit
+
+write.
+
+The Audit-Write Failure Isolation Pattern
+In production, high-throughput disk write locks or full storage partitions could cause SQLite to throw an operational exception. Under a naive
+implementation, this exception would cause /risk/evaluate to return an HTTP 500 Internal Server Error, leaving the merchant payment
+gateway blind and forcing the merchant to either drop the sale or let unvetted fraud pass through!
+MerchantShield AI handles this through Audit Isolation in backend/api/routes.py :
+audit_persisted = False
+audit_error = None
+if audit_store is not None:
+try:
+audit_store.record_decision(...)
+audit_persisted = True
+except AuditPersistenceError as e:
+audit_error = str(e)
+
+If audit persistence fails, the API still returns the valid HTTP 200 risk decision (with audit_persisted: false and audit_error
+populated). The merchant receives their fraud decision, and the audit write failure is surfaced as an operational warning rather than crashing the
+transaction.
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 27
+
+MerchantShield AI — Project Understanding & Technical Book
+
+6.4 Architectural Trade-Offs, Invariants & Decoupling
+The 5-Rule Deterministic Policy Cascade (First Match Wins)
+Source of truth: ml/evaluation/policy.py — Evaluated on (probability, amount) only
+
+evaluate_policy(p, amt)
+
+Rule 1: CRITICAL
+
+YES (Val Precision 94.1%)
+
+p ≥ 0.80 ?
+
+ACTION: BLOCK
+Rule ID: CRITICAL_BLOCK | Outright hold for human review
+
+NO
+
+YES (Frozen Decision Threshold)
+
+Rule 2: HIGH
+p ≥ 0.40 ?
+
+ACTION: STEP_UP_VERIFICATION
+Rule ID: HIGH_STEP_UP | Cost-optimal threshold operating point
+
+NO
+
+Rule 3: ESCALATION
+
+YES (High Financial Exposure)
+
+p ≥ 0.15 & amt ≥ ₹25k?
+
+ACTION: STEP_UP_VERIFICATION
+Rule ID: MEDIUM_AMOUNT_ESCALATION | High loss downside check
+
+NO
+
+Rule 4: MEDIUM
+
+YES (Elevated Risk Above Floor)
+
+p ≥ 0.15 ?
+
+ACTION: ALLOW_WITH_MONITORING
+Rule ID: MEDIUM_MONITOR | Allowed with passive observation flag
+
+NO (p < 0.15)
+
+Rule 5: LOW (Catch-all)
+
+Catch-all Default
+
+ACTION: ALLOW
+Rule ID: LOW_ALLOW | Zero friction, transaction permitted
+
+Figure 6.2: The Five-Rule Deterministic Policy Decision Cascade (Source: ml/evaluation/policy.py).
+
+The 5-Rule Policy Cascade (First Match Wins)
+The decision engine implements a strict priority ladder. In ml/evaluation/policy.py , rules fire in order:
+1. CRITICAL_BLOCK ( p ≥ 0.80 ): Recommends BLOCK . At 0.80 probability, validation precision is 94.1%—the model is overwhelmingly
+confident that the transaction is criminal.
+2. HIGH_STEP_UP ( p ≥ 0.40 ): Recommends STEP_UP_VERIFICATION . This operates at the cost-optimal decision threshold (0.40). It
+catches 88.2% of fraud while subjecting borderline transactions to low-friction verification (e.g., SMS OTP or biometric challenge) rather than
+an outright decline.
+3. MEDIUM_AMOUNT_ESCALATION ( p ≥ 0.15 AND amount ≥ ₹25,000 ): Recommends STEP_UP_VERIFICATION . Even though model
+probability is moderate, the high transaction value creates severe financial downside if fraudulent, warranting step-up friction.
+4. MEDIUM_MONITOR ( p ≥ 0.15 ): Recommends ALLOW_WITH_MONITORING . Elevated risk above baseline, but low enough that customer
+checkout friction is unwarranted.
+5. LOW_ALLOW (Catch-all): Recommends ALLOW . Clean transaction with minimal risk signals; permitted with zero friction.
+
+6.5 End-to-End Sequence & Data Flow
+The sequence diagram below traces the end-to-end lifecycle of an incoming transaction request through the system:
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 28
+
+MerchantShield AI — Project Understanding & Technical Book
+
+MerchantShield AI — End-to-End Sequence & Data Flow
+Step-by-step transaction evaluation showing exact component interactions and isolation boundaries
+
+React UI
+
+FastAPI
+
+Risk Service
+
+Features / ML
+
+Policy Engine
+
+SQLite Audit
+
+1. POST /risk/evaluate
+
+2. evaluate_full(bundle, req)
+
+3. build_features(df)
+15 feature series (row)
+
+4. predict_proba(X)
+P(fraud) = 0.9997
+
+5. evaluate_policy(0.9997, 45000)
+DecisionRecord: ACTION=BLOCK, Rule=CRITICAL_BLOCK
+
+6. explainer.explain(row)
+SHAP values + grounded reasons
+Decision + Explanation tuple
+
+8. audit_store.record_decision() [Isolated try/except]
+Audit persisted: true (or false with warning)
+
+9. HTTP 200 (RiskEvaluateResponse)
+
+Figure 6.3: MerchantShield AI End-to-End Sequence and Data Flow Diagram.
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 29
+
+MerchantShield AI — Project Understanding & Technical Book
+
+7 THE COMPLETE PROJECT PIPELINE: STAGE BY STAGE
+7.0 Execution Pipeline Overview
+The MerchantShield AI operational pipeline executes as a continuous, nine-stage sequence from the initial bootstrapping of the server
+environment through request ingestion, feature generation, inference, explainability, policy decisioning, audit logging, and response synthesis.
+
+MerchantShield AI — 9-Stage Execution Pipeline
+End-to-end execution flow from application startup to final client delivery
+
+STAGE 1: System Bootstrapping
+
+STAGE 2: Request Reception & Validation
+
+STAGE 3: Feature Engineering
+
+File: backend/main.py lifespan
+
+File: backend/schemas/transaction.py
+
+File: ml/features/build_features.py
+
+• Loads candidate_lgbm_v1.pkl
+
+• Validates types, IDs, amounts > 0
+
+• 15 strictly-prior features computed
+
+• Inits SHAP TreeExplainer
+
+• Checks prior transactions customer match
+
+• Velocity in 5m, 30m, 60m windows
+
+• Inits SQLite AuditStore & migrates
+
+• Strict timestamp check: prior < current
+
+• Expanding mean/std & amount z-score
+
+Graceful degradation: 503 on model failure
+
+Fails fast with HTTP 422 on shape error
+
+Leakage-safe: Zero future data peek
+
+STAGE 6: Grounded SHAP Explanation
+
+STAGE 5: LightGBM Inference
+
+STAGE 4: Feature Bounds Checking
+
+File: ml/evaluation/explainability.py
+
+File: candidate_lgbm_v1.pkl
+
+File: backend/services/risk_service.py
+
+• TreeExplainer calculates Shapley values
+
+• predict_proba(X) on 15 features
+
+• _validate_engineered_features()
+
+• Mathematical additivity check (|Δ|<1e-4)
+
+• Output validation: _validate_model_probability
+
+• Velocity caps (60m<1000, 30m<500)
+
+• Grounded natural language narratives
+
+• Asserts finite float in [0.0, 1.0]
+
+• Finite amount_zscore check (no NaN/Inf)
+
+Cold-start awareness: excludes 0-history stats
+
+V2 Hardening: No NaN / Inf propagation
+
+V2 Hardening: Blocks pathological input
+
+STAGE 7: Deterministic Policy Evaluation
+
+STAGE 8: Audit Persistence
+
+STAGE 9: Response Assembly & UI
+
+File: ml/evaluation/policy.py
+
+File: backend/services/audit_service.py
+
+File: RiskEvaluateResponse & App.jsx
+
+• 5-rule ordered table (first match wins)
+
+• Writes DecisionRecord to SQLite
+
+• Bundles probability, action, rule ID
+
+• CRITICAL_BLOCK (p≥0.80) → BLOCK
+
+• Separates decision facts & SHAP text
+
+• Includes signal_quality & cold_start
+
+• HIGH_STEP_UP (p≥0.40) → STEP_UP
+
+• Zero PII stored (no customer/device/geo)
+
+• Frontend renders verbatim action badge
+
+SHAP structurally isolated from action
+
+Failure isolation: Never drops risk decision
+
+Auditable delivery: Clean JSON contract
+
+Figure 7.1: The Nine-Stage MerchantShield AI Execution Pipeline.
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 30
+
+MerchantShield AI — Project Understanding & Technical Book
+
+STAGE 1 — System Bootstrapping & Model Loading
+1. PURPOSE
+
+Loads the pre-trained, frozen LightGBM model artifact, parses its associated evaluation metadata, constructs the in-memory SHAP TreeExplainer,
+and establishes the SQLite audit database connection once at server startup. Eliminates expensive per-request disk I/O and tree parsing
+overhead during live transaction scoring.
+2. TRIGGER
+
+Triggered when Uvicorn initializes the FastAPI process ( python -m uvicorn backend.main:app ) via the asynchronous lifespan context
+manager.
+3. INPUT
+
+Path strings defined in backend/config/settings.py :
+MODEL_PATH = "ml/models/candidate_lgbm_v1.pkl" (Binary joblib serialization)
+MODEL_METADATA_PATH = "ml/models/lgbm_v1_metadata.json" (JSON metadata file)
+AUDIT_DB_URL = "sqlite:///backend/data/audit.db" (SQLite connection URI)
+4. PROCESSING
+
+1. Validates existence of candidate_lgbm_v1.pkl and loads the LightGBM classifier into memory using joblib.load() .
+2. Validates that the unpickled object exposes a callable predict_proba method.
+3. Loads and parses lgbm_v1_metadata.json , verifying the presence of selected_threshold: 0.40 and validation metrics.
+4. Initializes a warm shap.TreeExplainer(model) instance pre-indexed against the LightGBM tree structures.
+5. Wraps model, explainer, and metadata into a singleton ModelBundle attached to app.state.model_bundle .
+6. Instantiates AuditStore , creates the audit_log table if missing, and executes idempotent SQLite schema migrations.
+5. RESPECTIVE FILES
+backend/main.py (lines 32–54, lifespan() )
+backend/services/model_loader.py (lines 25–65, load_model_bundle() and ModelBundle )
+backend/services/audit_service.py (lines 65–77, AuditStore.__init__() )
+6. DETAILED CODE EXPLANATION
+
+In backend/services/model_loader.py :
+def load_model_bundle(model_path: str, metadata_path: str) -> ModelBundle:
+if not os.path.exists(model_path):
+raise ModelUnavailableError(f"Model artifact not found at {model_path}")
+try:
+model = joblib.load(model_path)
+except Exception as e:
+raise ModelUnavailableError(f"Model artifact corrupt: {e}") from e
+if not hasattr(model, "predict_proba"):
+raise ModelUnavailableError("Loaded object does not look like a classifier")
+with open(metadata_path) as f:
+metadata = json.load(f)
+explainer = RiskExplainer(model) # Inits shap.TreeExplainer
+return ModelBundle(model=model, explainer=explainer, metadata=metadata, model_path=model_path)
+
+7. OUTPUT
+app.state.model_bundle containing ready-to-serve in-memory models and app.state.audit_store connected to the local database.
+8. NEXT STAGE
+
+The application enters the listening state on port 8000, ready for Stage 2 (Request Reception).
+9. FAILURE CASES
+
+If the pickle is missing or corrupt, ModelUnavailableError is caught in lifespan() . The process does not crash; it sets
+app.state.model_bundle = None . The /health endpoint serves status: "degraded", model_loaded: false , allowing
+
+monitoring tools to detect the degradation, while scoring endpoints reject requests with HTTP 503 Service Unavailable.
+10. CONCEPTUAL LESSON
+
+Fail-Open Liveness vs. Fail-Closed Traffic: Server processes should not abruptly crash when optional dependencies or model files fail to load.
+By coming up degraded, the service maintains network liveness, reports its internal state via telemetry endpoints, and prevents orchestrator
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 31
+
+MerchantShield AI — Project Understanding & Technical Book
+
+cascading restart storms.
+11. STAGE RECAP
+
+Initializes in-memory model, explainer, and database singletons exactly once, ensuring sub-50ms inference without per-request disk initialization.
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 32
+
+MerchantShield AI — Project Understanding & Technical Book
+
+STAGE 2 — Request Reception & Strict Shape Validation
+1. PURPOSE
+
+Intercepts incoming HTTP POST requests, deserializes the JSON body, and validates data types, non-blank constraints, and temporal
+chronological integrity. Prevents corrupt data or future-leakage payloads from reaching the machine learning pipeline.
+2. TRIGGER
+
+Triggered when an external client (checkout page or React dashboard) submits an HTTP POST request to /risk/evaluate , /risk/score ,
+or /risk/explain .
+3. INPUT
+
+Raw JSON payload matching the RiskRequest structure:
+{
+"transaction": {
+"transaction_id": "txn_live_test_001",
+"customer_id": "cust_00042",
+"merchant_id": "merch_0099",
+"merchant_category": "electronics",
+"timestamp": "2026-05-20T10:05:00Z",
+"amount": 45000.0,
+"device_id": "dev_BRAND_NEW",
+"geo_region": "region_19",
+"payment_method": "card",
+"status": "success",
+"account_created": "2025-01-01T00:00:00Z"
+},
+"prior_transactions": [ /* Array of 0 to 500 prior transactions */ ],
+"source": "manual"
+}
+
+4. PROCESSING
+
+1. FastAPI checks router mapping and verifies that the model bundle is loaded (throws HTTP 503 if bundle is None ).
+2. Pydantic validates fields: amount > 0 and amount ≤ 10,000,000 ; string fields non-empty and trimmed.
+3. Asserts account_created ≤ timestamp (a user cannot execute a purchase before their account existed).
+4. Iterates through prior_transactions , verifying:
+prior.customer_id == transaction.customer_id (history belongs to the same user).
+prior.timestamp < transaction.timestamp (strictly before current event; prevents future leakage).
+prior.transaction_id != transaction.transaction_id (a transaction cannot be its own prior history).
+5. RESPECTIVE FILES
+backend/api/routes.py (lines 100–103, risk_evaluate() )
+backend/schemas/transaction.py (lines 20–53, TransactionInput ; lines 55–101, RiskRequest )
+6. DETAILED CODE EXPLANATION
+
+Pydantic executes the _account_created_not_after_transaction model validator and then verifies prior history boundaries:
+# backend/schemas/transaction.py
+if prior.timestamp >= txn.timestamp:
+raise ValueError(
+f"prior_transactions[{i}].timestamp ({prior.timestamp}) is not strictly "
+f"before transaction.timestamp ({txn.timestamp}) -- feeding same-or-future "
+f"transactions as 'prior' context would leak information."
+)
+
+7. OUTPUT
+
+A strongly-typed, fully validated RiskRequest Python object instance.
+8. NEXT STAGE
+
+Passed to backend/services/risk_service.py for Stage 3 (Feature Engineering).
+9. FAILURE CASES
+
+If validation fails, validation_exception_handler() in main.py intercepts the RequestValidationError , sanitizes the error list, and
+returns a clean HTTP 422 Unprocessable Entity response:
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 33
+
+MerchantShield AI — Project Understanding & Technical Book
+
+{"error": "validation_error", "detail": "transaction.amount: Input should be greater than 0"}
+
+No Python stack trace is ever leaked to the client.
+10. CONCEPTUAL LESSON
+
+Defensive Boundary Parsing: Never permit raw dictionary input to penetrate business logic. Validating types, shapes, and domain rules at the
+outermost network perimeter protects inner statistical engines from undefined behavior.
+11. STAGE RECAP
+
+Enforces strict request typing, positive amounts, and chronological integrity, rejecting corrupt data with HTTP 422 before feature execution.
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 34
+
+MerchantShield AI — Project Understanding & Technical Book
+
+STAGE 3 — Leakage-Safe Feature Engineering
+1. PURPOSE
+
+Transforms the raw transaction record and its historical sequence into a single 15-dimensional numeric feature vector. Ensures that all behavioral
+and velocity features are computed strictly from events preceding the current transaction timestamp.
+2. TRIGGER
+
+Invoked by risk_service._build_feature_row(request) when processing scoring requests.
+3. INPUT
+
+A combined raw DataFrame containing the prior history rows concatenated with the current transaction row:
+
+all_txns = list(request.prior_transactions) + [request.transaction]
+raw_df = pd.DataFrame([t.model_dump() for t in all_txns])
+
+4. PROCESSING
+
+Executes the exact, unmodified build_features() function from ml/features/build_features.py :
+1. Sorts rows chronologically by timestamp for the customer.
+2. Computes running cumulative sums and squared sums shifted by one index ( [:-1] ).
+3. Calculates prior_mean , prior_std , amount_zscore , and amount_vs_avg_ratio .
+4. Calculates time_since_prev_txn_min (using sentinel 99999.0 for first transactions).
+5. Executes two-pointer sliding windows to count prior events within 5-minute, 30-minute, and 60-minute windows.
+6. Maintains historical sets to flag new_device_flag and new_geo_flag (defaulting to 0 for initial transactions).
+7. Calculates failed_ratio_trailing10 across the preceding 10 transactions.
+8. Extracts cyclical calendar features: hour_of_day , is_night (hours 0–4), and day_of_week .
+5. RESPECTIVE FILES
+backend/services/risk_service.py (lines 162–199, _build_feature_row() )
+ml/features/build_features.py (lines 25–142, build_features() and FEATURE_COLUMNS )
+6. DETAILED CODE EXPLANATION
+
+Extracts the single row corresponding to the transaction being scored:
+
+# backend/services/risk_service.py
+features_df = build_features(raw_df)
+match = features_df[features_df["transaction_id"] == request.transaction.transaction_id]
+if len(match) != 1:
+raise FeatureGenerationError(f"Expected exactly 1 row for transaction, got {len(match)}")
+row = match.iloc[0]
+
+7. OUTPUT
+
+A single pandas.Series ( row ) containing the 15 numeric values corresponding to FEATURE_COLUMNS .
+8. NEXT STAGE
+
+Passed to Stage 4 (Feature Bounds Checking & V2 Hardening).
+9. FAILURE CASES
+
+If pandas throws an unexpected grouping or type error, FeatureGenerationError is raised and translated by the route handler into an HTTP
+422 error.
+10. CONCEPTUAL LESSON
+
+Temporal Invariance in Time-Series Features: A feature engineering function must be mathematically incapable of peeking ahead. By enforcing
+shifting logic in cumulative sums, offline backtesting and live online inference execute under identical mathematical guarantees.
+11. STAGE RECAP
+
+Extracts 15 strictly-prior behavioral and velocity features without future leakage, matching offline training logic exactly.
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 35
+
+MerchantShield AI — Project Understanding & Technical Book
+
+STAGE 4 — Feature Bounds Checking & V2 Hardening
+1. PURPOSE
+
+V2 defensive sanity checking: verifies that engineered features fall within defensible physical domain bounds before being fed into the gradientboosted decision trees. Catches pathological inputs that could cause out-of-distribution model instability.
+2. TRIGGER
+
+Called within _build_feature_row() via _validate_engineered_features(row) prior to returning the feature series.
+3. INPUT
+
+The engineered feature pandas.Series generated in Stage 3.
+4. PROCESSING
+
+Evaluates physical domain boundaries:
+velocity_60min ≤ 1000 (normal rate is ~1 txn/min; >1000 txns in an hour indicates malformed history).
+velocity_30min ≤ 500 and velocity_5min ≤ 100 .
+prior_txn_count ≤ 100,000 .
+np.isfinite(amount_zscore) (checks strictly for NaN/Inf; allows legitimately extreme z-scores like 20+).
+time_since_prev_txn_min ≤ 100,000 (sentinel 99999.0 + buffer).
+5. RESPECTIVE FILES
+backend/services/risk_service.py (lines 39–92, _validate_engineered_features() )
+6. DETAILED CODE EXPLANATION
+
+# backend/services/risk_service.py
+if row.get("velocity_60min", 0) > 1000:
+raise FeatureGenerationError(
+f"Feature velocity_60min={row['velocity_60min']} exceeds sanity bound (1000). "
+f"Suggests malformed transaction history (e.g. identical timestamps)."
+)
+if not np.isfinite(row.get("amount_zscore", 0)):
+raise FeatureGenerationError("Feature amount_zscore is non-finite (NaN or Inf).")
+
+7. OUTPUT
+
+Execution completes silently if valid; returns control to caller.
+8. NEXT STAGE
+
+Proceeds to Stage 5 (LightGBM Model Inference).
+9. FAILURE CASES
+
+Raises FeatureGenerationError , which routes to an HTTP 422 response detailing the exact sanity boundary breach.
+10. CONCEPTUAL LESSON
+
+Domain Bound Invariants: Tree-based models are step-function estimators that cannot extrapolate outside their training support. Guarding input
+feature distributions prevents erratic leaf routing under pathological input conditions.
+11. STAGE RECAP
+
+Validates engineered features against physical domain bounds (velocity caps, finite z-scores) before model scoring.
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 36
+
+MerchantShield AI — Project Understanding & Technical Book
+
+STAGE 5 — LightGBM Model Inference & Output Hardening
+1. PURPOSE
+
+Executes gradient-boosted decision tree inference to estimate the fraud probability P(fraud) ∈ [0.0, 1.0]. Hardens the output against non-finite
+values (NaN/Inf) and out-of-range floats before downstream consumption.
+2. TRIGGER
+
+Invoked by risk_service.evaluate_full() (or score_only() ).
+3. INPUT
+
+A 1×15 numeric pandas.DataFrame ( X ) extracted from row[FEATURE_COLUMNS] .
+4. PROCESSING
+
+1. Calls bundle.model.predict_proba(X) on the frozen LightGBM artifact.
+2. Extracts positive class probability at column index 1: raw_prob = float(proba[0, 1]) .
+3. Executes V2 hardening validation via _validate_model_probability(raw_prob) :
+Checks math.isnan(p) .
+Checks math.isinf(p) .
+Checks 0.0 ≤ p ≤ 1.0 .
+4. Calculates informational 0–100 risk score and category via score_transaction(probability) .
+5. RESPECTIVE FILES
+backend/services/risk_service.py (lines 133–160, _validate_model_probability() ; lines 282–285)
+ml/evaluation/risk_scoring.py (lines 30–51, score_transaction() )
+6. DETAILED CODE EXPLANATION
+
+# backend/services/risk_service.py
+X = pd.DataFrame([row[FEATURE_COLUMNS].astype(float).values], columns=FEATURE_COLUMNS)
+raw_probability = float(bundle.model.predict_proba(X)[0, 1])
+probability = _validate_model_probability(raw_probability)
+
+7. OUTPUT
+
+Validated float probability (e.g., 0.9997 ) and informational dictionary {risk_score: 100, risk_category: "CRITICAL"} .
+8. NEXT STAGE
+
+Control bifurcates into two independent branches: Stage 6 (SHAP Explainability) and Stage 7 (Policy Evaluation).
+9. FAILURE CASES
+
+If the model outputs NaN or Inf, ModelOutputError is raised, returning HTTP 422 to prevent corrupt probabilities from reaching financial policy.
+10. CONCEPTUAL LESSON
+
+Trust Boundaries at Model Interfaces: Never assume a machine learning model's numerical outputs are guaranteed to be well-formed floats.
+Hardware errors, corrupt tree weights, or unexpected inputs can emit NaNs; verifying outputs protects downstream systems.
+11. STAGE RECAP
+
+Generates raw fraud probability via LightGBM inference and validates finiteness before policy consumption.
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 37
+
+MerchantShield AI — Project Understanding & Technical Book
+
+STAGE 6 — Grounded SHAP Explainability & Additivity Verification
+1. PURPOSE
+
+Decomposes the model's raw prediction into exact per-feature Shapley contributions, verifies mathematical additivity, filters history-dependent
+features for cold-start scenarios, and generates human-readable narratives.
+2. TRIGGER
+
+Called via bundle.explainer.explain(row) and build_explanation_text() in risk_service.py .
+3. INPUT
+
+The engineered pandas.Series ( row ), the frozen decision threshold ( 0.40 ), and is_cold_start boolean flag.
+4. PROCESSING
+
+1. Computes Shapley values using shap.TreeExplainer in margin (log-odds) space.
+2. Extracts base_value and feature contribution array sv .
+3. Verifies Additivity: Reconstructs probability:
+
+margin = base_value + np.sum(sv)
+reconstructed_prob = 1.0 / (1.0 + np.exp(-margin))
+additivity_ok = abs(reconstructed_prob - raw_prob) < 1e-4
+
+4. Sorts contributions by absolute magnitude ( abs(shap_value) ).
+5. Cold-Start Filtering: If prior_txn_count == 0 , filters out history-dependent features (rolling averages, z-scores) from the top reasons
+pool.
+6. Formats grounded explanation sentences using deterministic templates in ml/evaluation/explainability.py .
+5. RESPECTIVE FILES
+ml/evaluation/explainability.py (lines 84–170, RiskExplainer.explain() ; lines 182–245, build_explanation_text() ; lines
+
+247–270, humanize_contribution() )
+6. DETAILED CODE EXPLANATION
+
+Grounding template execution without hallucination:
+
+# ml/evaluation/explainability.py
+_TEMPLATES = {
+"amount_vs_avg_ratio": lambda v, s: (
+f"Transaction amount is {v:.1f}x the customer's historical average amount, "
+f"which {_direction_word(s)} risk"
+),
+"new_device_flag": lambda v, s: (
+"Device has not been seen previously for this customer, which increased risk" if v == 1
+else "Device has been used previously by this customer, which decreased risk"
+),
+}
+
+7. OUTPUT
+
+Structured dictionary containing:
+additivity_check_passed: true
+header: "Why this transaction was flagged:"
+reasons: [ "Transaction amount is 85.7x historical average...", ... ]
+contributions: [ { feature, value, shap_value, direction, magnitude }, ... ]
+8. NEXT STAGE
+
+Attached alongside the decision record for Stage 8 (Audit Persistence) and Stage 9 (Response Delivery).
+9. FAILURE CASES
+
+If SHAP fails due to memory exhaustion or version mismatch, the exception is caught in evaluate_full() . The risk decision is preserved,
+and the response marks explanation_available: false with explanation_header: "Explanation generation failed" .
+10. CONCEPTUAL LESSON
+
+Mathematical Additivity & Grounding: Shapley values satisfy the efficiency property—contributions sum to the difference between prediction
+and expected value. Verifying additivity mathematically proves that the explanation truthfully represents the model.
+11. STAGE RECAP
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 38
+
+MerchantShield AI — Project Understanding & Technical Book
+
+Computes grounded feature attributions with additivity verification, providing audit transparency without influencing the action.
+
+STAGE 7 — Deterministic Policy Evaluation & Action Bounding
+1. PURPOSE
+
+Converts the raw fraud probability and transaction amount into a bounded, deterministic operational action recommendation using a transparent
+five-rule priority cascade.
+2. TRIGGER
+
+Invoked by make_decision() in ml/evaluation/decision_engine.py .
+3. INPUT
+transaction_id: str , model_probability: float , amount: float .
+4. PROCESSING
+
+1. Re-validates probability (numeric, non-bool, in [0, 1]) and amount (numeric, non-negative).
+2. Calls evaluate_policy(probability, amount) :
+Checks Rule 1: probability ≥ 0.80 → CRITICAL_BLOCK ( BLOCK ).
+Checks Rule 2: probability ≥ 0.40 → HIGH_STEP_UP ( STEP_UP_VERIFICATION ).
+Checks Rule 3: probability ≥ 0.15 and amount ≥ 25,000 → MEDIUM_AMOUNT_ESCALATION ( STEP_UP_VERIFICATION ).
+Checks Rule 4: probability ≥ 0.15 → MEDIUM_MONITOR ( ALLOW_WITH_MONITORING ).
+Checks Rule 5: Catch-all → LOW_ALLOW ( ALLOW ).
+3. Asserts that the produced action is a member of ALLOWED_ACTIONS .
+4. Packages results into an immutable DecisionRecord .
+5. RESPECTIVE FILES
+ml/evaluation/policy.py (lines 101–120, evaluate_policy() )
+ml/evaluation/decision_engine.py (lines 82–123, make_decision() and DecisionRecord )
+6. DETAILED CODE EXPLANATION
+
+# ml/evaluation/policy.py
+def evaluate_policy(probability: float, amount: float) -> PolicyRule:
+for rule in POLICY_RULES:
+if rule.condition(probability, amount):
+if rule.action not in ALLOWED_ACTIONS:
+raise RuntimeError(f"Unrecognized action '{rule.action}'")
+return rule
+raise RuntimeError("No policy rule matched. Failing safe.")
+
+7. OUTPUT
+
+An immutable DecisionRecord dataclass instance containing action, rule ID, justification, and timestamp.
+8. NEXT STAGE
+
+Passed to Stage 8 (Audit Persistence).
+9. FAILURE CASES
+
+If an unrecognized action is produced or no rule matches, a RuntimeError is thrown rather than returning an undefined state, causing the API
+to return a sanitized HTTP 500.
+10. CONCEPTUAL LESSON
+
+The Separation of Decision and Presentation: A risk score (0–100) is for human eyes; policy rules must evaluate calibrated probabilities
+directly. This prevents presentation tweaks from silently mutating financial actions.
+11. STAGE RECAP
+
+Translates probability and amount into a bounded, auditable operational action via a 5-rule deterministic priority table.
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 39
+
+MerchantShield AI — Project Understanding & Technical Book
+
+STAGE 8 — Fail-Safe Audit Trail Persistence
+1. PURPOSE
+
+Durably commits the exact decision facts, policy rule, and serialized SHAP reasons to the SQLite audit database while enforcing failure isolation to
+protect transaction scoring availability.
+2. TRIGGER
+
+Invoked by the route handler in backend/api/routes.py immediately after evaluate_full() returns.
+3. INPUT
+request_id , decision (DecisionRecord), top_reasons (list of strings), source tag ( "demo" | "manual" ), and
+prior_txn_count .
+4. PROCESSING
+
+1. Opens a SQLAlchemy session bound to sqlite:///backend/data/audit.db .
+2. Constructs an AuditLogEntry record mapping decision fields.
+3. Serializes top reasons into JSON format ( json.dumps(top_reasons) ).
+4. Executes session.add(entry) and commits the transaction.
+5. Traps any database I/O exception, executes rollback, and catches AuditPersistenceError .
+5. RESPECTIVE FILES
+backend/services/audit_service.py (lines 78–110, record_decision() ; lines 40–59, AuditLogEntry )
+backend/api/routes.py (lines 117–130)
+6. DETAILED CODE EXPLANATION
+
+Failure isolation pattern in routes.py :
+# backend/api/routes.py
+audit_persisted = False
+audit_error = None
+if audit_store is not None:
+try:
+audit_store.record_decision(
+request_id, decision, decision.model_explanation,
+source=payload.source, prior_txn_count=prior_txn_count
+)
+audit_persisted = True
+except AuditPersistenceError as e:
+audit_error = str(e)
+
+7. OUTPUT
+
+A durable new row in the SQLite database and boolean flag audit_persisted .
+8. NEXT STAGE
+
+Proceeds to Stage 9 (Response Synthesis & Client Delivery).
+9. FAILURE CASES
+
+If the disk is read-only or locked, audit_store logs the error and sets audit_persisted = False . The API proceeds without dropping the
+scoring result.
+10. CONCEPTUAL LESSON
+
+Auxiliary Service Failure Isolation: Non-critical side-effects (such as telemetry, analytics, or audit logging) must never sit on the critical path in a
+manner that blocks core revenue operations when they experience transient faults.
+11. STAGE RECAP
+
+Persists decision facts and serialized SHAP narratives to SQLite without PII, isolated from scoring availability.
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 40
+
+MerchantShield AI — Project Understanding & Technical Book
+
+STAGE 9 — Response Synthesis & Client Delivery
+1. PURPOSE
+
+Assembles decision records, SHAP reasons, signal quality ratings, and audit persistence status into a strongly-typed Pydantic response, returning
+HTTP 200 JSON to the client.
+2. TRIGGER
+
+Concluding return statement in backend/api/routes.py::risk_evaluate() .
+3. INPUT
+
+The assembled results from Stages 5, 6, 7, and 8.
+4. PROCESSING
+
+1. Calculates historical context quality via _calculate_signal_quality(prior_txn_count) .
+2. Instantiates RiskEvaluateResponse with exact typed fields.
+3. Serializes model into JSON and returns HTTP 200.
+4. The React dashboard receives the response, updates state, and renders the verbatim action badge.
+5. RESPECTIVE FILES
+backend/api/routes.py (lines 147–170)
+backend/schemas/response.py (lines 48–68, RiskEvaluateResponse )
+frontend/src/App.jsx (lines 73–105, handleEvaluate() )
+6. DETAILED CODE EXPLANATION
+
+# backend/api/routes.py
+signal_quality = risk_service._calculate_signal_quality(prior_txn_count)
+return RiskEvaluateResponse(
+request_id=request_id,
+transaction_id=decision.transaction_id,
+model_version=decision.model_version,
+fraud_probability=decision.fraud_probability,
+threshold=decision.threshold,
+risk_score=decision.risk_score,
+risk_category=decision.risk_category,
+action=decision.action,
+policy_rule_id=decision.policy_rule_id,
+policy_reason=decision.policy_reason,
+explanation_header=explanation_header,
+reasons=reasons,
+explanation_available=explanation_available,
+cold_start_context=cold_start_context,
+timestamp=decision.timestamp,
+signal_quality=signal_quality,
+prior_transaction_count=prior_txn_count,
+audit_persisted=audit_persisted,
+audit_error=audit_error,
+)
+
+7. OUTPUT
+
+JSON response delivered to client over HTTP; rendered in React UI.
+8. NEXT STAGE
+
+Transaction evaluation complete. System waits for next request.
+9. FAILURE CASES
+
+If network disconnection occurs, the React client catches the fetch error and displays an ErrorBanner without crashing the browser view.
+10. CONCEPTUAL LESSON
+
+Strict Schema Contracts: A front-end dashboard should never guess backend state or parse unstructured strings. Strongly typed JSON schemas
+guarantee long-term system stability and cross-team velocity.
+11. STAGE RECAP
+
+Synthesizes the complete decision, SHAP attributions, signal quality ratings, and audit status into a typed JSON contract delivered to the client.
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 41
+
+MerchantShield AI — Project Understanding & Technical Book
+
+7.10 Complete Worked End-to-End Execution Trace
+To observe how these nine stages collaborate in practice, the table below documents an exact, unedited trace of transaction
+demo_txn_critical evaluated against the frozen production model:
+Pipeline Stage
+
+Component & Function
+
+State & Intermediate Values
+
+Stage 1:
+Bootstrapping
+
+model_loader.py::load_model_bundle()
+
+Loaded candidate_lgbm_v1.pkl (num_leaves=31,
+scale_pos_weight=73.2); SQLite connection established.
+
+Stage 2:
+Validation
+
+transaction.py::RiskRequest
+
+amount = 45000.0 ; customer_id =
+"demo_cust_critical" ; 8 prior transactions verified
+( timestamp < current ).
+
+Stage 3:
+Features
+
+build_features.py::build_features()
+
+amount_zscore = 22.4 ; amount_vs_avg_ratio =
+85.7 ; new_device_flag = 1 ; new_geo_flag = 1 ;
+velocity_60min = 1 .
+
+Stage 4: Bounds
+Check
+
+risk_service.py::_validate_engineered_features()
+
+Velocity check passed ( 1 ≤ 1000 ); finite check passed
+
+Stage 5:
+Inference
+
+candidate_lgbm_v1.pkl::predict_proba()
+
+Raw margin = +7.82; P(fraud) = 1 / (1 + e-7.82) = 0.9997; Risk
+Score = 100 (CRITICAL).
+
+Stage 6:
+Explainability
+
+explainability.py::explain()
+
+base_value = -3.84 ; Σ shap = +11.66; Reconstructed
+prob = 0.9997; Additivity check: PASSED (|Δ| < 0.0001).
+
+Stage 7: Policy
+
+policy.py::evaluate_policy(0.9997, 45000)
+
+Rule 1 matched: 0.9997 ≥ 0.80; policy_rule_id =
+"CRITICAL_BLOCK" ; Action = BLOCK .
+
+Stage 8: Audit
+
+audit_service.py::record_decision()
+
+Row written to backend/data/audit.db ;
+audit_persisted = True ; PII omitted.
+
+Stage 9:
+Delivery
+
+routes.py → App.jsx
+
+HTTP 200 returned in 34ms; React dashboard renders
+Crimson BLOCK badge and SHAP contribution bars.
+
+( np.isfinite(22.4) == True ).
+
+Validation Set Threshold Analysis Chart
+Figure 7.2 displays the actual matplotlib output from Phase 5 ( ml/models/threshold_analysis_chart.png ), showing precision, recall, F1score, and total expected rupee cost across the validation threshold sweep:
+
+Figure 7.2: Precision, Recall, F1, and Expected Cost vs. Decision Threshold on the Held-Out Validation Partition (ml/models/threshold_analysis_chart.png).
+Notice the cost minimum at threshold 0.40.
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 42
+
+MerchantShield AI — Project Understanding & Technical Book
+
+8 FINAL SUMMARY AND PROJECT MASTERY
+8.1 The Project in One Complete Narrative
+MerchantShield AI is an explainable, defensive transaction-risk decisioning system developed for the Razorpay AI Buildathon 2026. The
+platform bridges the dangerous gap between statistical machine learning models and operational business action by cleanly decoupling three
+fundamental concerns:
+1. Statistical Probability Estimation: A frozen LightGBM classifier estimates P(fraud) ∈ [0.0, 1.0] from 15 strictly-prior behavioral
+features computed across customer transaction sequences without future leakage.
+2. Mathematical Explainability: A SHAP TreeExplainer decomposes the model's raw margin output into exact feature attributions, verifying
+additivity ( base + Σshap ≈ predict_proba ) on every evaluation.
+3. Deterministic Policy Governance: A transparent five-rule priority cascade maps (probability, amount) to bounded action
+recommendations ( ALLOW , ALLOW_WITH_MONITORING , STEP_UP_VERIFICATION , BLOCK ) using a cost-minimized threshold (0.40) rather
+than an arbitrary 0.50 cutoff.
+The system packages these capabilities into a high-performance FastAPI backend, a governance-first SQLite audit store that omits customer
+PII, and an interactive React 19 dashboard speaking pure HTTP/JSON.
+
+8.2 Complete Flow Recap (10-Step Numbered Sequence)
+1. Server Startup: Uvicorn launches FastAPI; the lifespan manager loads candidate_lgbm_v1.pkl , initializes shap.TreeExplainer ,
+and connects the SQLite audit database.
+2. Request Ingestion: A client submits an HTTP POST to /risk/evaluate containing current transaction details and optional prior customer
+history.
+3. Shape & Chronology Validation: Pydantic validates field constraints and asserts that all prior transaction timestamps are strictly before the
+current transaction.
+4. Feature Transformation: build_features() computes 15 leakage-safe behavioral features (rolling means, amount z-scores, velocity
+counts, device/geo novelty).
+5. V2 Bounds Hardening: _validate_engineered_features() checks that velocity counts and z-scores fall within defensible domain limits.
+6. LightGBM Inference: The frozen model outputs raw probability, verified to be a finite float in [0.0, 1.0] .
+7. Decision Engine Execution: evaluate_policy(probability, amount) checks the 5-rule cascade and produces a bounded action
+recommendation independently of SHAP.
+8. SHAP Attributions: TreeExplainer computes feature contributions and verifies additivity within 1e-4 tolerance, generating grounded text
+narratives.
+9. Isolated Audit Persistence: Decision facts and serialized SHAP reasons are saved to SQLite without customer PII; audit write failures are
+trapped and isolated.
+10. Client Delivery: A strongly-typed RiskEvaluateResponse is returned over HTTP 200, rendering verbatim action badges and SHAP bars in
+the React dashboard.
+
+8.3 Key Architectural Components to Remember
+DECISION_THRESHOLD = 0.40 : The operating boundary chosen by sweeping validation thresholds against an asymmetric cost function
+
+subject to ≥80% recall.
+CRITICAL_MIN = 0.80 : The policy threshold where validation precision reaches 94.1%, warranting an outright BLOCK recommendation.
+LARGE_AMOUNT_CUTOFF = 25,000.0 : Policy escalation cutoff that subjects mid-probability purchases to STEP_UP_VERIFICATION due to
+
+high loss downside.
+ml/features/build_features.py : The single source of truth for the 15 behavioral features.
+ml/evaluation/policy.py : The single source of truth for the 5-rule deterministic policy table.
+backend/services/audit_service.py : The privacy-conscious audit persistence engine with idempotent SQLite schema migrations.
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 43
+
+MerchantShield AI — Project Understanding & Technical Book
+
+8.4 Verified Strengths vs. Explicit Prototype Limitations
+Verified Strengths (Measured Facts)
+
+Prototype Limitations & Boundary Realities
+
+Leakage-Free Features: Proven by dedicated tests verifying
+strictly-prior historical computation on 213,000 transactions.
+
+Synthetic Training Data: The production model was trained on generator-controlled
+synthetic data; no live bank data was claimed.
+
+Asymmetric Cost Optimization: Selected threshold (0.40)
+reduces test-set fraud loss to ₹41,377 vs ₹110,582 for baseline.
+
+External Transfer Discrepancy: Frozen synthetic model failed on IEEE-CIS (ROCAUC 0.443) due to z-score domain shift; retraining required.
+
+Mathematical Grounding: SHAP additivity verified on every call
+(1e-4 tolerance); no free-text LLM hallucination.
+
+No Live Customer DB: Callers must supply prior transaction history in the request
+payload; no live transaction lookups exist.
+
+Decoupled Governance: SHAP explanations are structurally
+isolated from action logic; score buckets do not drive policy.
+
+Policy Label Monitoring: ALLOW_WITH_MONITORING is an auditable label; no
+background polling daemon exists.
+
+Defensive V2 Hardening: Feature bounds validation, model
+probability checks, and SQLite column migrations.
+
+No Authentication: API and dashboard contain no user login or RBAC permissions
+(designed as an internal microservice).
+
+8.5 Self-Testing Examination & Grounded Answers
+Q1: Why is reporting raw classification accuracy dangerous in fraud detection?
+Answer: Because fraud prevalence is extremely low (1–3%). A trivial model predicting 100% legitimate achieves 98.5% accuracy while catching
+zero fraud. Metrics must report PR-AUC, precision, recall, and total financial cost.
+
+Q2: Why was the operating threshold set to 0.40 rather than the default 0.50 or the F1-maximum 0.80?
+Answer: Fraud losses are asymmetric: false negatives (stolen merchandise) cost orders of magnitude more than false positives (₹50
+operational check). Sweeping thresholds on validation data against the cost model identified 0.40 as the exact mathematical minimum cost
+subject to maintaining ≥80% recall. The F1-maximum (0.80) weights precision and recall equally, which misses mid-range fraud and increases
+total costs by ~38%.
+
+Q3: How does MerchantShield AI prove that its feature engineering has zero data leakage?
+Answer: In ml/features/build_features.py , cumulative sums are shifted by one index ( np.cumsum(...)[:-1] ) so that row i only
+observes rows 0 through i-1 . Automated tests in tests/test_no_leakage.py verify that feature values match the historical sequence
+exactly when re-computed incrementally.
+
+Q4: Why are SHAP explanations structurally prevented from influencing the decision engine's action?
+Answer: SHAP explains the model's internal reasoning, which can exhibit feature correlation or credit-splitting. Financial actions require hard,
+auditable guarantees. The function signature of evaluate_policy(probability, amount) physically cannot receive SHAP explanations,
+ensuring an explanation bug can never silently alter an operational action.
+
+Q5: Why does a transaction with probability 0.25 show as risk category "LOW" while receiving an action of
+"ALLOW_WITH_MONITORING"?
+Answer: Because the 0–100 risk score buckets (0–30 is LOW) are informational presentation tools for human cognitive ergonomics, whereas
+the action policy enforces a 0.15 floor for elevated monitoring. Decoupling display buckets from action rules ensures presentation adjustments
+never accidentally alter financial actions.
+
+Q6: What happened during Experiment A when the frozen synthetic model was tested on real IEEE-CIS data?
+Answer: The frozen model failed with an inverted ROC-AUC of 0.443. The root cause was domain distribution shift: on IEEE-CIS data, cards
+with thousands of prior transactions produced extreme z-scores that the synthetic model had never encountered during training, inverting the
+probability ranking.
+
+Q7: How did Phase 15 improve fraud detection on real IEEE-CIS chargeback data?
+Answer: Phase 15 introduced the card_product_share feature (fraction of a card's prior transactions in the current product category). This
+emerged as the 3rd most important feature by gain, reducing false positives by 17.7% and expected cost by 17.0%, elevating test ROC-AUC to
+0.771.
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 44
+
+MerchantShield AI — Project Understanding & Technical Book
+
+Q8: What is the Audit-Write Failure Isolation pattern in backend/api/routes.py ?
+Answer: If an operational error prevents SQLite from persisting the audit record, the exception is caught and logged. The API still returns the
+valid HTTP 200 risk decision with audit_persisted: false , ensuring ancillary logging failures never block checkout transactions.
+
+Q9: How does the system handle "cold-start" transactions where a customer has zero prior history?
+Answer: Neutral sentinel values are assigned ( time_since_prev_txn_min = 99999.0 , z-scores = 0.0), history-dependent features are
+filtered out of the SHAP narrative, and the API returns signal_quality: {{ level: "MINIMAL" }} to transparently alert analysts.
+
+Q10: Why are customer IDs and device IDs omitted from the SQLite audit log table?
+Answer: To adhere to privacy-by-design standards. The audit log exists solely to prove what the risk decisioning system evaluated and why,
+avoiding the unnecessary and legally hazardous duplication of merchant customer PII.
+
+8.6 How to Explain This Project to Another Engineer
+The 30-Second Elevator Pitch
+"MerchantShield AI is an end-to-end explainable transaction-risk decisioning platform built for the Razorpay AI Buildathon. Instead of naively
+thresholding a black-box model at 0.50, it decouples statistical estimation, presentation scoring, and business governance. It estimates fraud
+probability using a frozen LightGBM model over 15 strictly-prior behavioral features, verifies exact mathematical additivity on every prediction
+using SHAP TreeExplainer, and maps the probability to bounded actions—like step-up verification or blocking—using a cost-optimized threshold
+of 0.40 and a deterministic 5-rule policy table."
+
+The 2-Minute Architectural Overview
+"Most fraud ML projects fail in production because they mix up classification with decisioning. A model predicting 0.45 doesn't tell you whether to
+block a card—that depends on false-positive friction costs, the transaction amount, and compliance policy.
+MerchantShield solves this with four decoupled tiers: First, a FastAPI gateway validates incoming payloads and ensures historical context is
+strictly prior in time. Second, a leakage-safe NumPy pipeline extracts 15 behavioral signals like velocity windows and expanding amount zscores. Third, a frozen LightGBM classifier estimates fraud probability, which is immediately decomposed by a SHAP TreeExplainer that verifies
+mathematical additivity on every call. Fourth, a deterministic five-rule policy cascade maps probability and amount to an operational
+recommendation—ALLOW, ALLOW_WITH_MONITORING, STEP_UP_VERIFICATION, or BLOCK. Everything is committed to a PII-free SQLite
+audit log with isolated error handling and served to a React 19 dashboard speaking pure HTTP/JSON. The entire system is covered by 269
+automated tests."
+
+The 10-Minute Deep Technical Walkthrough
+When presenting the codebase in an architectural interview or deep-dive code review:
+1. Start at backend/config/settings.py and ml/evaluation/policy.py : Point out that settings files define paths and constants, but
+deliberately contain zero policy numbers. Policy numbers live strictly in policy.py .
+2. Walk through ml/features/build_features.py : Show the cumulative sum indexing ( cumsum[:-1] ) and two-pointer velocity loops.
+Emphasize how tests/test_no_leakage.py proves temporal invariance.
+3. Explain ml/training/train_candidates.py and the Early Stopping Bug: Share the discovery of the LightGBM scale_pos_weight
+logloss veto and how switching to first_metric_only=True on AUC fixed convergence.
+4. Review ml/evaluation/threshold_analysis.py and Cost Formulation: Explain why the operating threshold is 0.40 (cost-optimal)
+rather than 0.80 (F1-maximum), citing asymmetric false negative losses.
+5. Demonstrate ml/evaluation/explainability.py : Show how the margin sum reconstructs probability through the sigmoid function,
+proving exact SHAP grounding.
+6. Examine backend/api/routes.py and services/audit_service.py : Highlight the audit failure isolation pattern and idempotent
+SQLite column migration for V2 deployments.
+7. Discuss the External Validation Track (IEEE-CIS): Explain the honest failure of Experiment A (frozen transfer) due to z-score distribution
+shift, and the success of Experiment B (retrained transfer achieving 0.771 ROC-AUC and 79.8% recall with card_product_share ).
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 45
+
+MerchantShield AI — Project Understanding & Technical Book
+
+8.7 Engineering Glossary & Final Revision Checklist
+Technical Glossary
+Class Imbalance: An extreme disparity between positive (fraud) and negative (legitimate) examples, invalidating raw accuracy.
+Temporal Data Leakage: An error where information from future events inadvertently contaminates feature calculations for past
+transactions.
+Operating Threshold: The mathematical probability cutoff above which an alert or friction action is triggered.
+Asymmetric Cost Function: A loss formulation where false negatives and false positives carry unequal financial weights.
+Shapley Value: A game-theoretic measure calculating the fair marginal contribution of each feature to a model's prediction.
+Additivity Property: The mathematical requirement that the base expected value plus the sum of all feature attributions equals the model's
+prediction.
+Bounded Action: An operational recommendation that is reversible and non-destructive, avoiding automated unilateral financial transfers.
+Signal Quality: An operational rating (MINIMAL to ESTABLISHED) indicating the volume of historical context available for behavioral
+inference.
+
+Final Revision Checklist for Engineers
+[x] Understand the 3-tier decoupling (ML probability → 0–100 display score → 5-rule policy action).
+[x] Explain why 0.40 was chosen instead of 0.50 using the asymmetric financial cost model.
+[x] Articulate how shifting cumulative sums prevents data leakage in build_features.py .
+[x] Describe how shap.TreeExplainer verifies additivity within 1e-4 tolerance.
+[x] Explain why the audit log omits customer PII and how audit write failure isolation works.
+[x] Understand why the frozen model failed on IEEE-CIS while the retrained methodology succeeded.
+[x] Verify that all 269 automated tests pass and that CI runs cleanly.
+
+Confidential / Razorpay AI Buildathon 2026
+
+Page 46
+
+

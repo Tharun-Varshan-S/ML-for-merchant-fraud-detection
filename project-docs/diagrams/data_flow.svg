@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 640" width="100%" height="100%" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #ffffff;">
+  <defs>
+    <filter id="shadow5" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.08"/>
+    </filter>
+    <marker id="arrow-flow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#0284c7"/>
+    </marker>
+    <marker id="arrow-green-flow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#16a34a"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="460" y="32" text-anchor="middle" font-size="18" font-weight="700" fill="#0f172a">MerchantShield AI — End-to-End Sequence &amp; Data Flow</text>
+  <text x="460" y="52" text-anchor="middle" font-size="12" fill="#64748b">Step-by-step transaction evaluation showing exact component interactions and isolation boundaries</text>
+
+  <!-- Lifeline Columns -->
+  <!-- Col 1: Client (React) -->
+  <line x1="80" y1="80" x2="80" y2="600" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <rect x="25" y="80" width="110" height="34" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="80" y="102" text-anchor="middle" font-size="12" font-weight="700" fill="#1d4ed8">React UI</text>
+
+  <!-- Col 2: FastAPI -->
+  <line x1="230" y1="80" x2="230" y2="600" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <rect x="175" y="80" width="110" height="34" rx="6" fill="#f0f9ff" stroke="#0284c7" stroke-width="1.5"/>
+  <text x="230" y="102" text-anchor="middle" font-size="12" font-weight="700" fill="#0369a1">FastAPI</text>
+
+  <!-- Col 3: Risk Service -->
+  <line x1="390" y1="80" x2="390" y2="600" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <rect x="330" y="80" width="120" height="34" rx="6" fill="#f8fafc" stroke="#475569" stroke-width="1.5"/>
+  <text x="390" y="102" text-anchor="middle" font-size="12" font-weight="700" fill="#334155">Risk Service</text>
+
+  <!-- Col 4: ML & Features -->
+  <line x1="550" y1="80" x2="550" y2="600" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <rect x="495" y="80" width="110" height="34" rx="6" fill="#fefce8" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="550" y="102" text-anchor="middle" font-size="12" font-weight="700" fill="#854d0e">Features / ML</text>
+
+  <!-- Col 5: Policy & Decision -->
+  <line x1="700" y1="80" x2="700" y2="600" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <rect x="645" y="80" width="110" height="34" rx="6" fill="#fff1f2" stroke="#e11d48" stroke-width="1.5"/>
+  <text x="700" y="102" text-anchor="middle" font-size="12" font-weight="700" fill="#9f1239">Policy Engine</text>
+
+  <!-- Col 6: SQLite DB -->
+  <line x1="840" y1="80" x2="840" y2="600" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <rect x="785" y="80" width="110" height="34" rx="6" fill="#f8fafc" stroke="#64748b" stroke-width="1.5"/>
+  <text x="840" y="102" text-anchor="middle" font-size="12" font-weight="700" fill="#1e293b">SQLite Audit</text>
+
+  <!-- Sequence Step 1 -->
+  <line x1="80" y1="140" x2="230" y2="140" stroke="#0284c7" stroke-width="2" marker-end="url(#arrow-flow)"/>
+  <text x="155" y="132" text-anchor="middle" font-size="10.5" font-weight="600" fill="#0284c7">1. POST /risk/evaluate</text>
+
+  <!-- Sequence Step 2 -->
+  <line x1="230" y1="180" x2="390" y2="180" stroke="#0284c7" stroke-width="2" marker-end="url(#arrow-flow)"/>
+  <text x="310" y="172" text-anchor="middle" font-size="10.5" font-weight="600" fill="#0284c7">2. evaluate_full(bundle, req)</text>
+
+  <!-- Sequence Step 3 -->
+  <line x1="390" y1="220" x2="550" y2="220" stroke="#0284c7" stroke-width="2" marker-end="url(#arrow-flow)"/>
+  <text x="470" y="212" text-anchor="middle" font-size="10.5" font-weight="600" fill="#0284c7">3. build_features(df)</text>
+
+  <line x1="550" y1="250" x2="390" y2="250" stroke="#64748b" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#arrow-flow)"/>
+  <text x="470" y="244" text-anchor="middle" font-size="10" fill="#64748b">15 feature series (row)</text>
+
+  <!-- Sequence Step 4 -->
+  <line x1="390" y1="285" x2="550" y2="285" stroke="#ca8a04" stroke-width="2" marker-end="url(#arrow-flow)"/>
+  <text x="470" y="277" text-anchor="middle" font-size="10.5" font-weight="600" fill="#854d0e">4. predict_proba(X)</text>
+
+  <line x1="550" y1="315" x2="390" y2="315" stroke="#ca8a04" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#arrow-flow)"/>
+  <text x="470" y="309" text-anchor="middle" font-size="10" fill="#854d0e">P(fraud) = 0.9997</text>
+
+  <!-- Sequence Step 5 (Decision happens BEFORE SHAP) -->
+  <line x1="390" y1="355" x2="700" y2="355" stroke="#e11d48" stroke-width="2" marker-end="url(#arrow-flow)"/>
+  <text x="545" y="347" text-anchor="middle" font-size="10.5" font-weight="700" fill="#be123c">5. evaluate_policy(0.9997, 45000)</text>
+
+  <line x1="700" y1="385" x2="390" y2="385" stroke="#e11d48" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#arrow-flow)"/>
+  <text x="545" y="379" text-anchor="middle" font-size="10" font-weight="600" fill="#be123c">DecisionRecord: ACTION=BLOCK, Rule=CRITICAL_BLOCK</text>
+
+  <!-- Sequence Step 6 (SHAP explanation attempted) -->
+  <line x1="390" y1="425" x2="550" y2="425" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrow-flow)"/>
+  <text x="470" y="417" text-anchor="middle" font-size="10.5" font-weight="600" fill="#6d28d9">6. explainer.explain(row)</text>
+
+  <line x1="550" y1="455" x2="390" y2="455" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#arrow-flow)"/>
+  <text x="470" y="449" text-anchor="middle" font-size="10" fill="#6d28d9">SHAP values + grounded reasons</text>
+
+  <!-- Sequence Step 7: Return to API -->
+  <line x1="390" y1="485" x2="230" y2="485" stroke="#64748b" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#arrow-flow)"/>
+  <text x="310" y="477" text-anchor="middle" font-size="10" fill="#334155">Decision + Explanation tuple</text>
+
+  <!-- Sequence Step 8: Isolated Audit Write -->
+  <line x1="230" y1="515" x2="840" y2="515" stroke="#475569" stroke-width="2" marker-end="url(#arrow-flow)"/>
+  <text x="535" y="507" text-anchor="middle" font-size="10.5" font-weight="600" fill="#334155">8. audit_store.record_decision() [Isolated try/except]</text>
+
+  <line x1="840" y1="545" x2="230" y2="545" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#arrow-green-flow)"/>
+  <text x="535" y="539" text-anchor="middle" font-size="10" font-weight="600" fill="#15803d">Audit persisted: true (or false with warning)</text>
+
+  <!-- Sequence Step 9: Final HTTP Response -->
+  <line x1="230" y1="580" x2="80" y2="580" stroke="#16a34a" stroke-width="2" marker-end="url(#arrow-green-flow)"/>
+  <text x="155" y="572" text-anchor="middle" font-size="10.5" font-weight="700" fill="#15803d">9. HTTP 200 (RiskEvaluateResponse)</text>
+
+</svg>

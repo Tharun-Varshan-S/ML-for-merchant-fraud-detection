@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 620" width="100%" height="100%" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #ffffff;">
+  <defs>
+    <filter id="shadow4" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#0f172a" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <!-- Title -->
+  <text x="400" y="32" text-anchor="middle" font-size="18" font-weight="700" fill="#0f172a">SQLite Audit Log Entity Design (backend/data/audit.db)</text>
+  <text x="400" y="52" text-anchor="middle" font-size="12" fill="#64748b">Defensive governance storage: Durably preserves WHAT &amp; WHY while strictly omitting customer PII</text>
+
+  <!-- Table Container -->
+  <rect x="60" y="80" width="680" height="510" rx="10" fill="#ffffff" stroke="#475569" stroke-width="2" filter="url(#shadow4)"/>
+  
+  <!-- Table Header -->
+  <rect x="60" y="80" width="680" height="42" rx="10" fill="#1e293b"/>
+  <text x="85" y="106" font-size="15" font-weight="700" fill="#f8fafc">TABLE: audit_log</text>
+  <text x="715" y="106" text-anchor="end" font-size="12" fill="#94a3b8">SQLAlchemy Model: AuditLogEntry</text>
+
+  <!-- Column Header Row -->
+  <rect x="60" y="122" width="680" height="30" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="85" y="142" font-size="11" font-weight="700" fill="#475569">COLUMN NAME</text>
+  <text x="270" y="142" font-size="11" font-weight="700" fill="#475569">SQL TYPE</text>
+  <text x="410" y="142" font-size="11" font-weight="700" fill="#475569">INDEX / NULL</text>
+  <text x="540" y="142" font-size="11" font-weight="700" fill="#475569">GOVERNANCE PURPOSE</text>
+
+  <!-- Rows -->
+  <!-- 1. id -->
+  <text x="85" y="172" font-size="12" font-weight="700" fill="#0f172a">id</text>
+  <text x="270" y="172" font-size="12" fill="#334155">INTEGER</text>
+  <text x="410" y="172" font-size="11" font-weight="600" fill="#0284c7">PRIMARY KEY</text>
+  <text x="540" y="172" font-size="11" fill="#64748b">Auto-increment row ID</text>
+  <line x1="60" y1="184" x2="740" y2="184" stroke="#f1f5f9" stroke-width="1"/>
+
+  <!-- 2. request_id -->
+  <text x="85" y="202" font-size="12" font-weight="600" fill="#0f172a">request_id</text>
+  <text x="270" y="202" font-size="12" fill="#334155">VARCHAR(64)</text>
+  <text x="410" y="202" font-size="11" font-weight="600" fill="#475569">INDEXED, NOT NULL</text>
+  <text x="540" y="202" font-size="11" fill="#64748b">UUID4 API transaction trace ID</text>
+  <line x1="60" y1="214" x2="740" y2="214" stroke="#f1f5f9" stroke-width="1"/>
+
+  <!-- 3. transaction_id -->
+  <text x="85" y="232" font-size="12" font-weight="600" fill="#0f172a">transaction_id</text>
+  <text x="270" y="232" font-size="12" fill="#334155">VARCHAR(64)</text>
+  <text x="410" y="232" font-size="11" font-weight="600" fill="#475569">INDEXED, NOT NULL</text>
+  <text x="540" y="232" font-size="11" fill="#64748b">Merchant transaction identifier</text>
+  <line x1="60" y1="244" x2="740" y2="244" stroke="#f1f5f9" stroke-width="1"/>
+
+  <!-- 4. model_version -->
+  <text x="85" y="262" font-size="12" font-weight="600" fill="#0f172a">model_version</text>
+  <text x="270" y="262" font-size="12" fill="#334155">VARCHAR(32)</text>
+  <text x="410" y="262" font-size="11" fill="#64748b">NOT NULL</text>
+  <text x="540" y="262" font-size="11" fill="#64748b">Frozen model identifier ("lgbm_v1")</text>
+  <line x1="60" y1="274" x2="740" y2="274" stroke="#f1f5f9" stroke-width="1"/>
+
+  <!-- 5. fraud_probability -->
+  <text x="85" y="292" font-size="12" font-weight="600" fill="#0f172a">fraud_probability</text>
+  <text x="270" y="292" font-size="12" fill="#334155">FLOAT</text>
+  <text x="410" y="292" font-size="11" fill="#64748b">NOT NULL</text>
+  <text x="540" y="292" font-size="11" fill="#64748b">Raw predicted probability [0.0 - 1.0]</text>
+  <line x1="60" y1="304" x2="740" y2="304" stroke="#f1f5f9" stroke-width="1"/>
+
+  <!-- 6. threshold -->
+  <text x="85" y="322" font-size="12" font-weight="600" fill="#0f172a">threshold</text>
+  <text x="270" y="322" font-size="12" fill="#334155">FLOAT</text>
+  <text x="410" y="322" font-size="11" fill="#64748b">NOT NULL</text>
+  <text x="540" y="322" font-size="11" fill="#64748b">Cost-optimal boundary (0.40)</text>
+  <line x1="60" y1="334" x2="740" y2="334" stroke="#f1f5f9" stroke-width="1"/>
+
+  <!-- 7. risk_score & category -->
+  <text x="85" y="352" font-size="12" font-weight="600" fill="#0f172a">risk_score / category</text>
+  <text x="270" y="352" font-size="12" fill="#334155">INTEGER / VARCHAR</text>
+  <text x="410" y="352" font-size="11" fill="#64748b">NOT NULL</text>
+  <text x="540" y="352" font-size="11" fill="#64748b">0-100 score + LOW/MED/HIGH/CRIT</text>
+  <line x1="60" y1="364" x2="740" y2="364" stroke="#f1f5f9" stroke-width="1"/>
+
+  <!-- 8. action -->
+  <text x="85" y="382" font-size="12" font-weight="700" fill="#dc2626">action</text>
+  <text x="270" y="382" font-size="12" fill="#334155">VARCHAR(32)</text>
+  <text x="410" y="382" font-size="11" fill="#64748b">NOT NULL</text>
+  <text x="540" y="382" font-size="11" font-weight="600" fill="#dc2626">ALLOW / STEP_UP / BLOCK</text>
+  <line x1="60" y1="394" x2="740" y2="394" stroke="#f1f5f9" stroke-width="1"/>
+
+  <!-- 9. policy_rule_id & reason -->
+  <text x="85" y="412" font-size="12" font-weight="600" fill="#0f172a">policy_rule_id / reason</text>
+  <text x="270" y="412" font-size="12" fill="#334155">VARCHAR / TEXT</text>
+  <text x="410" y="412" font-size="11" fill="#64748b">NOT NULL</text>
+  <text x="540" y="412" font-size="11" fill="#64748b">Exact rule triggered &amp; rationale text</text>
+  <line x1="60" y1="424" x2="740" y2="424" stroke="#f1f5f9" stroke-width="1"/>
+
+  <!-- 10. top_reasons_json -->
+  <text x="85" y="442" font-size="12" font-weight="700" fill="#7c3aed">top_reasons_json</text>
+  <text x="270" y="442" font-size="12" fill="#334155">TEXT</text>
+  <text x="410" y="442" font-size="11" fill="#64748b">NULLABLE</text>
+  <text x="540" y="442" font-size="11" font-weight="600" fill="#7c3aed">Separated SHAP explanation JSON</text>
+  <line x1="60" y1="454" x2="740" y2="454" stroke="#f1f5f9" stroke-width="1"/>
+
+  <!-- 11. source & prior_txn_count -->
+  <text x="85" y="472" font-size="12" font-weight="600" fill="#0f172a">source / prior_txn_count</text>
+  <text x="270" y="472" font-size="12" fill="#334155">VARCHAR / INTEGER</text>
+  <text x="410" y="472" font-size="11" fill="#64748b">NOT NULL</text>
+  <text x="540" y="472" font-size="11" fill="#64748b">Origin ("demo"|"manual") &amp; V2 context</text>
+  <line x1="60" y1="484" x2="740" y2="484" stroke="#f1f5f9" stroke-width="1"/>
+
+  <!-- 12. created_at -->
+  <text x="85" y="502" font-size="12" font-weight="600" fill="#0f172a">created_at</text>
+  <text x="270" y="502" font-size="12" fill="#334155">DATETIME</text>
+  <text x="410" y="502" font-size="11" fill="#64748b">NOT NULL</text>
+  <text x="540" y="502" font-size="11" fill="#64748b">Record persistence timestamp (UTC)</text>
+  <line x1="60" y1="514" x2="740" y2="514" stroke="#cbd5e1" stroke-width="1"/>
+
+  <!-- Footer Annotation -->
+  <rect x="60" y="525" width="680" height="65" fill="#f8fafc"/>
+  <text x="85" y="546" font-size="11" font-weight="700" fill="#b91c1c">DELIBERATELY OMITTED FROM AUDIT STORAGE:</text>
+  <text x="85" y="564" font-size="10.5" fill="#475569">• customer_id, device_id, geo_region, payment_method, merchant_id, account_created</text>
+  <text x="85" y="580" font-size="10" fill="#64748b">Rationale: Audit trail's purpose is to prove what the RISK SYSTEM decided and why, avoiding merchant PII duplication.</text>
+
+</svg>

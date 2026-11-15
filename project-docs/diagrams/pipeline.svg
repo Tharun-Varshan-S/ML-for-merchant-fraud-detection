@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700" width="100%" height="100%" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #ffffff;">
+  <defs>
+    <filter id="shadow2" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.08"/>
+    </filter>
+    <marker id="arrow2" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#0284c7"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="500" y="32" text-anchor="middle" font-size="20" font-weight="700" fill="#0f172a">MerchantShield AI — 9-Stage Execution Pipeline</text>
+  <text x="500" y="52" text-anchor="middle" font-size="12" fill="#64748b">End-to-end execution flow from application startup to final client delivery</text>
+
+  <!-- Grid of 9 stages (3 rows of 3 stages) -->
+
+  <!-- STAGE 1 -->
+  <rect x="50" y="80" width="270" height="150" rx="8" fill="#f8fafc" stroke="#0284c7" stroke-width="1.5" filter="url(#shadow2)"/>
+  <rect x="50" y="80" width="270" height="28" rx="8" fill="#0284c7"/>
+  <text x="185" y="99" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">STAGE 1: System Bootstrapping</text>
+  <text x="65" y="125" font-size="11" font-weight="600" fill="#0f172a">File: backend/main.py lifespan</text>
+  <text x="65" y="145" font-size="10.5" fill="#334155">• Loads candidate_lgbm_v1.pkl</text>
+  <text x="65" y="163" font-size="10.5" fill="#334155">• Inits SHAP TreeExplainer</text>
+  <text x="65" y="181" font-size="10.5" fill="#334155">• Inits SQLite AuditStore &amp; migrates</text>
+  <text x="65" y="202" font-size="10" font-weight="600" fill="#0369a1">Graceful degradation: 503 on model failure</text>
+
+  <!-- Arrow 1 to 2 -->
+  <line x1="320" y1="155" x2="365" y2="155" stroke="#0284c7" stroke-width="2" marker-end="url(#arrow2)"/>
+
+  <!-- STAGE 2 -->
+  <rect x="365" y="80" width="270" height="150" rx="8" fill="#f8fafc" stroke="#0284c7" stroke-width="1.5" filter="url(#shadow2)"/>
+  <rect x="365" y="80" width="270" height="28" rx="8" fill="#0284c7"/>
+  <text x="500" y="99" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">STAGE 2: Request Reception &amp; Validation</text>
+  <text x="380" y="125" font-size="11" font-weight="600" fill="#0f172a">File: backend/schemas/transaction.py</text>
+  <text x="380" y="145" font-size="10.5" fill="#334155">• Validates types, IDs, amounts &gt; 0</text>
+  <text x="380" y="163" font-size="10.5" fill="#334155">• Checks prior transactions customer match</text>
+  <text x="380" y="181" font-size="10.5" fill="#334155">• Strict timestamp check: prior &lt; current</text>
+  <text x="380" y="202" font-size="10" font-weight="600" fill="#dc2626">Fails fast with HTTP 422 on shape error</text>
+
+  <!-- Arrow 2 to 3 -->
+  <line x1="635" y1="155" x2="680" y2="155" stroke="#0284c7" stroke-width="2" marker-end="url(#arrow2)"/>
+
+  <!-- STAGE 3 -->
+  <rect x="680" y="80" width="270" height="150" rx="8" fill="#f8fafc" stroke="#059669" stroke-width="1.5" filter="url(#shadow2)"/>
+  <rect x="680" y="80" width="270" height="28" rx="8" fill="#059669"/>
+  <text x="815" y="99" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">STAGE 3: Feature Engineering</text>
+  <text x="695" y="125" font-size="11" font-weight="600" fill="#0f172a">File: ml/features/build_features.py</text>
+  <text x="695" y="145" font-size="10.5" fill="#334155">• 15 strictly-prior features computed</text>
+  <text x="695" y="163" font-size="10.5" fill="#334155">• Velocity in 5m, 30m, 60m windows</text>
+  <text x="695" y="181" font-size="10.5" fill="#334155">• Expanding mean/std &amp; amount z-score</text>
+  <text x="695" y="202" font-size="10" font-weight="600" fill="#047857">Leakage-safe: Zero future data peek</text>
+
+  <!-- Arrow 3 to 4 (Downwards) -->
+  <path d="M 815 230 L 815 260 L 815 280" fill="none" stroke="#0284c7" stroke-width="2" marker-end="url(#arrow2)"/>
+
+  <!-- STAGE 4 -->
+  <rect x="680" y="285" width="270" height="150" rx="8" fill="#f8fafc" stroke="#d97706" stroke-width="1.5" filter="url(#shadow2)"/>
+  <rect x="680" y="285" width="270" height="28" rx="8" fill="#d97706"/>
+  <text x="815" y="304" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">STAGE 4: Feature Bounds Checking</text>
+  <text x="695" y="330" font-size="11" font-weight="600" fill="#0f172a">File: backend/services/risk_service.py</text>
+  <text x="695" y="350" font-size="10.5" fill="#334155">• _validate_engineered_features()</text>
+  <text x="695" y="368" font-size="10.5" fill="#334155">• Velocity caps (60m&lt;1000, 30m&lt;500)</text>
+  <text x="695" y="386" font-size="10.5" fill="#334155">• Finite amount_zscore check (no NaN/Inf)</text>
+  <text x="695" y="407" font-size="10" font-weight="600" fill="#b45309">V2 Hardening: Blocks pathological input</text>
+
+  <!-- Arrow 4 to 5 (Leftwards) -->
+  <line x1="680" y1="360" x2="635" y2="360" stroke="#0284c7" stroke-width="2" marker-end="url(#arrow2)"/>
+
+  <!-- STAGE 5 -->
+  <rect x="365" y="285" width="270" height="150" rx="8" fill="#f8fafc" stroke="#d97706" stroke-width="1.5" filter="url(#shadow2)"/>
+  <rect x="365" y="285" width="270" height="28" rx="8" fill="#d97706"/>
+  <text x="500" y="304" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">STAGE 5: LightGBM Inference</text>
+  <text x="380" y="330" font-size="11" font-weight="600" fill="#0f172a">File: candidate_lgbm_v1.pkl</text>
+  <text x="380" y="350" font-size="10.5" fill="#334155">• predict_proba(X) on 15 features</text>
+  <text x="380" y="368" font-size="10.5" fill="#334155">• Output validation: _validate_model_probability</text>
+  <text x="380" y="386" font-size="10.5" fill="#334155">• Asserts finite float in [0.0, 1.0]</text>
+  <text x="380" y="407" font-size="10" font-weight="600" fill="#b45309">V2 Hardening: No NaN / Inf propagation</text>
+
+  <!-- Arrow 5 to 6 (Leftwards) -->
+  <line x1="365" y1="360" x2="320" y2="360" stroke="#0284c7" stroke-width="2" marker-end="url(#arrow2)"/>
+
+  <!-- STAGE 6 -->
+  <rect x="50" y="285" width="270" height="150" rx="8" fill="#f8fafc" stroke="#7c3aed" stroke-width="1.5" filter="url(#shadow2)"/>
+  <rect x="50" y="285" width="270" height="28" rx="8" fill="#7c3aed"/>
+  <text x="185" y="304" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">STAGE 6: Grounded SHAP Explanation</text>
+  <text x="65" y="330" font-size="11" font-weight="600" fill="#0f172a">File: ml/evaluation/explainability.py</text>
+  <text x="65" y="350" font-size="10.5" fill="#334155">• TreeExplainer calculates Shapley values</text>
+  <text x="65" y="368" font-size="10.5" fill="#334155">• Mathematical additivity check (|&Delta;|&lt;1e-4)</text>
+  <text x="65" y="386" font-size="10.5" fill="#334155">• Grounded natural language narratives</text>
+  <text x="65" y="407" font-size="10" font-weight="600" fill="#6d28d9">Cold-start awareness: excludes 0-history stats</text>
+
+  <!-- Arrow 6 to 7 (Downwards) -->
+  <path d="M 185 435 L 185 465 L 185 485" fill="none" stroke="#0284c7" stroke-width="2" marker-end="url(#arrow2)"/>
+
+  <!-- STAGE 7 -->
+  <rect x="50" y="490" width="270" height="150" rx="8" fill="#f8fafc" stroke="#e11d48" stroke-width="1.5" filter="url(#shadow2)"/>
+  <rect x="50" y="490" width="270" height="28" rx="8" fill="#e11d48"/>
+  <text x="185" y="509" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">STAGE 7: Deterministic Policy Evaluation</text>
+  <text x="65" y="535" font-size="11" font-weight="600" fill="#0f172a">File: ml/evaluation/policy.py</text>
+  <text x="65" y="555" font-size="10.5" fill="#334155">• 5-rule ordered table (first match wins)</text>
+  <text x="65" y="573" font-size="10.5" fill="#334155">• CRITICAL_BLOCK (p&ge;0.80) &rarr; BLOCK</text>
+  <text x="65" y="591" font-size="10.5" fill="#334155">• HIGH_STEP_UP (p&ge;0.40) &rarr; STEP_UP</text>
+  <text x="65" y="612" font-size="10" font-weight="600" fill="#be123c">SHAP structurally isolated from action</text>
+
+  <!-- Arrow 7 to 8 (Rightwards) -->
+  <line x1="320" y1="565" x2="365" y2="565" stroke="#0284c7" stroke-width="2" marker-end="url(#arrow2)"/>
+
+  <!-- STAGE 8 -->
+  <rect x="365" y="490" width="270" height="150" rx="8" fill="#f8fafc" stroke="#475569" stroke-width="1.5" filter="url(#shadow2)"/>
+  <rect x="365" y="490" width="270" height="28" rx="8" fill="#475569"/>
+  <text x="500" y="509" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">STAGE 8: Audit Persistence</text>
+  <text x="380" y="535" font-size="11" font-weight="600" fill="#0f172a">File: backend/services/audit_service.py</text>
+  <text x="380" y="555" font-size="10.5" fill="#334155">• Writes DecisionRecord to SQLite</text>
+  <text x="380" y="573" font-size="10.5" fill="#334155">• Separates decision facts &amp; SHAP text</text>
+  <text x="380" y="591" font-size="10.5" fill="#334155">• Zero PII stored (no customer/device/geo)</text>
+  <text x="380" y="612" font-size="10" font-weight="600" fill="#334155">Failure isolation: Never drops risk decision</text>
+
+  <!-- Arrow 8 to 9 (Rightwards) -->
+  <line x1="635" y1="565" x2="680" y2="565" stroke="#0284c7" stroke-width="2" marker-end="url(#arrow2)"/>
+
+  <!-- STAGE 9 -->
+  <rect x="680" y="490" width="270" height="150" rx="8" fill="#f8fafc" stroke="#0284c7" stroke-width="1.5" filter="url(#shadow2)"/>
+  <rect x="680" y="490" width="270" height="28" rx="8" fill="#0284c7"/>
+  <text x="815" y="509" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">STAGE 9: Response Assembly &amp; UI</text>
+  <text x="695" y="535" font-size="11" font-weight="600" fill="#0f172a">File: RiskEvaluateResponse &amp; App.jsx</text>
+  <text x="695" y="555" font-size="10.5" fill="#334155">• Bundles probability, action, rule ID</text>
+  <text x="695" y="573" font-size="10.5" fill="#334155">• Includes signal_quality &amp; cold_start</text>
+  <text x="695" y="591" font-size="10.5" fill="#334155">• Frontend renders verbatim action badge</text>
+  <text x="695" y="612" font-size="10" font-weight="600" fill="#0369a1">Auditable delivery: Clean JSON contract</text>
+
+</svg>

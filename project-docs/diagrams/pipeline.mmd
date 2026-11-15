@@ -1,0 +1,10 @@
+flowchart TD
+    S1["Stage 1: System Bootstrapping<br/><code>main.py</code> lifespan<br/>Load Model & DB"] --> S2["Stage 2: Request Validation<br/><code>routes.py</code> & <code>transaction.py</code><br/>Strict Schema & History Check"]
+    S2 --> S3["Stage 3: Feature Engineering<br/><code>build_features.py</code><br/>15 Leakage-Safe Features"]
+    S3 --> S4["Stage 4: Feature Bounds Check<br/><code>risk_service.py</code><br/>Sanity Bounds Validation"]
+    S4 --> S5["Stage 5: Model Inference<br/>LightGBM <code>predict_proba</code><br/>Probability Sanity Check"]
+    S5 --> S6["Stage 6: Risk Scoring & Policy<br/><code>policy.py</code> & <code>decision_engine.py</code><br/>Independent Action Determination"]
+    S5 -.->|Independent Branch| S7["Stage 7: SHAP Explanation<br/><code>explainability.py</code><br/>Additivity Check & Grounded Text"]
+    S6 --> S8["Stage 8: Audit Persistence<br/><code>audit_service.py</code><br/>Isolated SQLite Write"]
+    S7 -.-> S8
+    S8 --> S9["Stage 9: Response Assembly<br/><code>routes.py</code><br/>Client Delivery via HTTP"]
