@@ -135,13 +135,13 @@ change what *action* is taken.
 
 ## Tech stack
 
-| Layer | Technology |
-|---|---|
-| ML / data | Python, pandas, NumPy, scikit-learn, LightGBM, SHAP, scipy |
-| Backend | FastAPI, Pydantic, SQLAlchemy + SQLite |
-| Frontend | React 19, Vite, plain CSS (no UI framework) |
-| Testing | pytest, FastAPI TestClient |
-| Containerisation | Docker (multi-stage build), docker-compose |
+| Layer            | Technology                                                 |
+| ---------------- | ---------------------------------------------------------- |
+| ML / data        | Python, pandas, NumPy, scikit-learn, LightGBM, SHAP, scipy |
+| Backend          | FastAPI, Pydantic, SQLAlchemy + SQLite                     |
+| Frontend         | React 19, Vite, plain CSS (no UI framework)                |
+| Testing          | pytest, FastAPI TestClient                                 |
+| Containerisation | Docker (multi-stage build), docker-compose                 |
 
 No Kubernetes, no message queue, no auth layer, no extra databases — deliberately
 minimal for a buildathon prototype.
@@ -187,11 +187,11 @@ All numbers are on the **held-out test set** (days 50–59; never used during mo
 selection or threshold tuning). Comparison was based on validation-set expected cost,
 not accuracy or ROC-AUC alone.
 
-| Model | Precision | Recall | F1 | PR-AUC | FP | FN | Est. cost (test) |
-|---|---|---|---|---|---|---|---|
-| Logistic Regression (baseline) | 0.448 | 0.825 | 0.581 | 0.739 | 730 | 126 | ₹110,582 |
-| Random Forest | 0.746 | 0.868 | 0.802 | 0.883 | 213 | 95 | ₹68,479 |
-| **LightGBM (selected)** | **0.785** | **0.882** | **0.830** | 0.901 | 174 | 85 | **₹41,377** |
+| Model                          | Precision       | Recall          | F1              | PR-AUC | FP  | FN  | Est. cost (test)   |
+| ------------------------------ | --------------- | --------------- | --------------- | ------ | --- | --- | ------------------ |
+| Logistic Regression (baseline) | 0.448           | 0.825           | 0.581           | 0.739  | 730 | 126 | ₹110,582          |
+| Random Forest                  | 0.746           | 0.868           | 0.802           | 0.883  | 213 | 95  | ₹68,479           |
+| **LightGBM (selected)**  | **0.785** | **0.882** | **0.830** | 0.901  | 174 | 85  | **₹41,377** |
 
 **Selected operating threshold: 0.40** — chosen by minimising expected cost on
 validation (FP cost: ₹50 flat; FN cost: 0.5 × transaction amount) subject to a
@@ -211,13 +211,13 @@ Full threshold sweep, cost-sensitivity analysis, and all reproducible scripts ar
 A five-rule policy table converts a fraud probability (and transaction amount) into
 a bounded action recommendation. Rules fire in order; first match wins.
 
-| Rule | Condition | Action |
-|---|---|---|
-| `CRITICAL_BLOCK` | probability ≥ 0.80 | `BLOCK` |
-| `HIGH_STEP_UP` | probability ≥ 0.40 | `STEP_UP_VERIFICATION` |
-| `MEDIUM_AMOUNT_ESCALATION` | probability ≥ 0.15 and amount ≥ ₹25,000 | `STEP_UP_VERIFICATION` |
-| `MEDIUM_MONITOR` | probability ≥ 0.15 | `ALLOW_WITH_MONITORING` |
-| `LOW_ALLOW` | (catch-all) | `ALLOW` |
+| Rule                         | Condition                                  | Action                    |
+| ---------------------------- | ------------------------------------------ | ------------------------- |
+| `CRITICAL_BLOCK`           | probability ≥ 0.80                        | `BLOCK`                 |
+| `HIGH_STEP_UP`             | probability ≥ 0.40                        | `STEP_UP_VERIFICATION`  |
+| `MEDIUM_AMOUNT_ESCALATION` | probability ≥ 0.15 and amount ≥ ₹25,000 | `STEP_UP_VERIFICATION`  |
+| `MEDIUM_MONITOR`           | probability ≥ 0.15                        | `ALLOW_WITH_MONITORING` |
+| `LOW_ALLOW`                | (catch-all)                                | `ALLOW`                 |
 
 Every action is a **recommendation only** — the system cannot move money, freeze
 accounts, or contact anyone. `ALLOW_WITH_MONITORING` is a policy label; no background
@@ -229,6 +229,7 @@ boundary-condition tests are in [`docs/decision_engine.md`](docs/decision_engine
 ## Explainability
 
 Every `/risk/evaluate` call returns:
+
 - **SHAP contributions** for all 15 features (real values from the model, not
   templates or LLM-generated text)
 - **Additivity check**: `base_value + Σ(shap_values) ≈ predict_proba` verified on
@@ -257,11 +258,11 @@ not directly comparable.
 
 ### Experiment A — Frozen model transfer (lgbm_v1 at threshold 0.40 on IEEE-CIS)
 
-| Metric | Result |
-|---|---|
-| ROC-AUC | **0.443** (below 0.5 — ranking is inverted) |
-| Recall at 0.40 | 0.5% |
-| Fraud caught | 19 of 4,064 |
+| Metric         | Result                                             |
+| -------------- | -------------------------------------------------- |
+| ROC-AUC        | **0.443** (below 0.5 — ranking is inverted) |
+| Recall at 0.40 | 0.5%                                               |
+| Fraud caught   | 19 of 4,064                                        |
 
 **The frozen model does not generalise to IEEE-CIS.** Root cause: the model was
 calibrated to 1.6% fraud prevalence on a synthetic distribution; on IEEE-CIS at 3.5%
@@ -275,16 +276,16 @@ A fresh LightGBM was trained from scratch on the IEEE-CIS training split using
 MerchantShield's feature engineering approach (13 of 15 features computable; 2 features
 — device novelty and failure ratio — are absent from IEEE-CIS data):
 
-| Metric | Phase 14 baseline | Phase 15 (+card_product_share) |
-|---|---|---|
-| ROC-AUC | 0.753 | **0.771** |
-| PR-AUC | 0.114 | **0.128** |
-| Precision | 0.057 | **0.066** |
-| Recall | 0.804 | 0.776 |
-| F1 | 0.106 | **0.122** |
-| False positives | 54,079 | **44,502** (−17.7%) |
-| Expected cost | 2,763,187 | **2,294,373** (−17.0%) |
-| FP:TP ratio | 16.6 | **14.1** |
+| Metric          | Phase 14 baseline | Phase 15 (+card_product_share) |
+| --------------- | ----------------- | ------------------------------ |
+| ROC-AUC         | 0.753             | **0.771**                |
+| PR-AUC          | 0.114             | **0.128**                |
+| Precision       | 0.057             | **0.066**                |
+| Recall          | 0.804             | 0.776                          |
+| F1              | 0.106             | **0.122**                |
+| False positives | 54,079            | **44,502** (−17.7%)     |
+| Expected cost   | 2,763,187         | **2,294,373** (−17.0%)  |
+| FP:TP ratio     | 16.6              | **14.1**                 |
 
 † Phase 15 used a 0.05-step threshold sweep; Phase 17 used a 0.01-step sweep — same
 methodology, higher resolution. Minor metric differences (e.g. threshold 0.37 vs 0.35)
@@ -310,26 +311,26 @@ A fresh LightGBM was trained on the IEEE-CIS training split (16 features: 15 bas
 `card_product_share`) and evaluated **exactly once** on the held-out test split
 (118,108 transactions, days 140–182) after threshold selection on validation only:
 
-| Metric | Value |
-|---|---|
-| ROC-AUC | **0.771** |
-| PR-AUC | **0.128** |
-| Precision | **0.063** |
-| Recall | **0.798** |
-| F1 | **0.117** |
-| Fraud caught (TP) | 3,243 of 4,064 **(79.8%)** |
-| False positives (FP) | 48,139 |
-| FP:TP ratio | 14.8 |
-| False positive rate | 42.2% |
-| Expected cost | 2,469,531 cost units |
-| Selected threshold | 0.35 (val cost-min, recall ≥ 80%) |
+| Metric               | Value                              |
+| -------------------- | ---------------------------------- |
+| ROC-AUC              | **0.771**                    |
+| PR-AUC               | **0.128**                    |
+| Precision            | **0.063**                    |
+| Recall               | **0.798**                    |
+| F1                   | **0.117**                    |
+| Fraud caught (TP)    | 3,243 of 4,064 **(79.8%)**   |
+| False positives (FP) | 48,139                             |
+| FP:TP ratio          | 14.8                               |
+| False positive rate  | 42.2%                              |
+| Expected cost        | 2,469,531 cost units               |
+| Selected threshold   | 0.35 (val cost-min, recall ≥ 80%) |
 
 **Confusion matrix (held-out test set):**
 
-| | Predicted legitimate | Predicted fraud |
-|---|---|---|
-| **Actually legitimate** | 65,905 (TN) | 48,139 (FP) |
-| **Actually fraud** | 821 (FN) | 3,243 (TP) |
+|                               | Predicted legitimate | Predicted fraud |
+| ----------------------------- | -------------------- | --------------- |
+| **Actually legitimate** | 65,905 (TN)          | 48,139 (FP)     |
+| **Actually fraud**      | 821 (FN)             | 3,243 (TP)      |
 
 > *IEEE-CIS is US e-commerce data from Vesta Corporation, not Razorpay/UPI/POS transactions.*
 
@@ -340,6 +341,7 @@ model failure — it is a data-compatibility constraint documented in full.
 
 **The IEEE-CIS data is not committed to this repository.** Set `IEEE_DATA_DIR` to
 reproduce:
+
 ```bash
 export IEEE_DATA_DIR=/path/to/ieee_cis_data
 python ml/external/ieee/razorpay_validation.py
@@ -364,14 +366,14 @@ still returns the computed decision (`audit_persisted: false`).
 FastAPI backend with interactive docs at `/docs`. Full contract in
 [`docs/api.md`](docs/api.md).
 
-| Method | Endpoint | Purpose |
-|---|---|---|
-| GET | `/health` | Liveness + model loaded status |
-| GET | `/model/info` | Frozen model metadata, threshold, val/test metrics |
-| POST | `/risk/score` | Probability + risk score (no audit write) |
-| POST | `/risk/explain` | + SHAP explanation (no audit write) |
-| POST | `/risk/evaluate` | Full pipeline: score + explain + decide + audit |
-| GET | `/audit-log` | Recent persisted decisions |
+| Method | Endpoint           | Purpose                                            |
+| ------ | ------------------ | -------------------------------------------------- |
+| GET    | `/health`        | Liveness + model loaded status                     |
+| GET    | `/model/info`    | Frozen model metadata, threshold, val/test metrics |
+| POST   | `/risk/score`    | Probability + risk score (no audit write)          |
+| POST   | `/risk/explain`  | + SHAP explanation (no audit write)                |
+| POST   | `/risk/evaluate` | Full pipeline: score + explain + decide + audit    |
+| GET    | `/audit-log`     | Recent persisted decisions                         |
 
 ## Frontend / dashboard
 
@@ -460,6 +462,7 @@ python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000
 ```
 
 For frontend live-reload development:
+
 ```bash
 # terminal 1: python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000
 # terminal 2: cd frontend && npm run dev
@@ -468,6 +471,7 @@ For frontend live-reload development:
 ### Regenerating the dataset / retraining
 
 The CSVs are not committed; the scripts are. To regenerate:
+
 ```bash
 python ml/data/generate_synthetic.py
 python ml/features/build_features.py
@@ -475,6 +479,7 @@ python ml/features/build_features.py
 
 To retrain from scratch (the frozen model artifact is already committed — this is
 optional):
+
 ```bash
 python ml/training/train_baseline.py
 python ml/training/train_candidates.py
@@ -496,22 +501,23 @@ prevention, label independence), card-product familiarity features (35 tests), a
 hardening (model output validation, feature bounds checking, signal quality grading,
 prior transaction context, schema migration).
 
-| Test file | Focus | Notes |
-|---|---|---|
-| `test_decision_engine.py` | All policy branches, boundary cases, fail-safe | ~1 s |
-| `test_explainability.py` | SHAP grounding, additivity, determinism | ~20 s |
-| `test_api.py` | Full API contract, every error path, audit isolation | ~15 s |
-| `test_v2_hardening.py` | **(V2)** Model validation, feature bounds, signal quality, schema migration | ~5 s |
-| `test_no_leakage.py` | Strictly-prior feature computation on 213k-row CSV | ~3 min |
-| `test_ieee_external.py` | IEEE-CIS adapter, features, split, leakage guards | ~1 min (non-integration) |
-| `test_card_product_features.py` | card_product_share and sibling features | ~4 s |
-| `test_phase17_validation.py` | Phase 17 pipeline: scoring, threshold selection, feature contract, result schema | ~13 s |
+| Test file                         | Focus                                                                             | Notes                    |
+| --------------------------------- | --------------------------------------------------------------------------------- | ------------------------ |
+| `test_decision_engine.py`       | All policy branches, boundary cases, fail-safe                                    | ~1 s                     |
+| `test_explainability.py`        | SHAP grounding, additivity, determinism                                           | ~20 s                    |
+| `test_api.py`                   | Full API contract, every error path, audit isolation                              | ~15 s                    |
+| `test_v2_hardening.py`          | **(V2)** Model validation, feature bounds, signal quality, schema migration | ~5 s                     |
+| `test_no_leakage.py`            | Strictly-prior feature computation on 213k-row CSV                                | ~3 min                   |
+| `test_ieee_external.py`         | IEEE-CIS adapter, features, split, leakage guards                                 | ~1 min (non-integration) |
+| `test_card_product_features.py` | card_product_share and sibling features                                           | ~4 s                     |
+| `test_phase17_validation.py`    | Phase 17 pipeline: scoring, threshold selection, feature contract, result schema  | ~13 s                    |
 
 **Current test count: 269 non-integration tests passing** (run `pytest tests/` — 10
 integration tests require the local IEEE-CIS CSV files and are automatically skipped
 in CI). CI runs the full suite on every push to `main`.
 
 **GitHub Actions CI** verifies on every push:
+
 - Backend job (Python 3.13, ubuntu-latest): install deps → generate data → build
   features → build frontend → run full test suite
 - Frontend job (Node 22.12.0, ubuntu-latest): npm ci → npm run build

@@ -1,0 +1,85 @@
+================================================================================
+MERCHANTSHIELD AI - OFFICIAL UI COLOR PALETTE & DESIGN SYSTEM SPECIFICATION
+Extracted from: frontend/src/styles/tokens.css & frontend/src/styles/App.css
+Live Application URL: http://localhost:8000
+================================================================================
+
+1. APPLICATION SURFACES & CANVAS
+--------------------------------------------------------------------------------
+- Main Canvas / Page Background:  #F0F2F5  (--bg)
+- Secondary Surface (Sunken):     #F5F7FA  (--surface-sunken: headers, tables, tiles)
+- Inset Surface (Nested wells):   #EEF0F4  (--surface-inset: tags, tracks, inputs)
+- Primary Card Surface (Raised):  #FFFFFF  (--surface, --surface-raised)
+- Application Header Background:  #0F1624  (--text-primary, dark brand navy header)
+- Header Pill / Badge Surface:    rgba(255, 255, 255, 0.07) with border rgba(255, 255, 255, 0.12)
+
+2. TYPOGRAPHY & TEXT COLORS
+--------------------------------------------------------------------------------
+- Primary Text Color:             #0F1624  (--text-primary: deep obsidian navy)
+- Secondary Text Color:           #4A5568  (--text-secondary: slate charcoal)
+- Tertiary / Muted Text Color:    #8492A6  (--text-tertiary: cool gray)
+- Inverse Text (on dark shells):  #FFFFFF  (--text-inverse: pure white)
+- Header Subtitle Muted:          rgba(255, 255, 255, 0.55) (~#8D96A5)
+- UI Font Family:                 "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif
+- Monospace Font Family:          "IBM Plex Mono", "SFMono-Regular", Consolas, monospace
+
+3. BORDERS, DIVIDERS & SEPARATORS
+--------------------------------------------------------------------------------
+- Base Border:                    #DDE1EA  (--border: standard panel borders)
+- Strong Border:                  #C4CAD6  (--border-strong: input outlines, divider lines)
+- Subtle Border:                  #E8EAEF  (--border-subtle: header separators, subtle rows)
+
+4. BRAND ACCENTS & INTERACTION STATES
+--------------------------------------------------------------------------------
+- Primary Brand Accent:           #2563EB  (--accent: modern royal blue)
+- Accent Strong (Hover/Active):   #1D4ED8  (--accent-strong: deep blue)
+- Accent Soft (Highlight/Pill):   #DBEAFE  (--accent-soft: pale blue)
+- Accent Muted (Card Selected):   #EFF6FF  (--accent-muted: very light blue)
+
+5. RISK SEVERITY & ACTION TIER COLORS
+--------------------------------------------------------------------------------
+- LOW RISK / ALLOW ACTION:
+  * Primary Accent:               #16A34A  (--risk-low: emerald green)
+  * Background Surface:           #F0FDF4  (--risk-low-bg)
+  * Border Accent:                #BBF7D0  (--risk-low-border)
+  * Badge / Muted Fill:           #DCFCE7  (--risk-low-muted)
+
+- MEDIUM RISK / ALLOW_WITH_MONITORING ACTION:
+  * Primary Accent:               #D97706  (--risk-medium: warm amber)
+  * Background Surface:           #FFFBEB  (--risk-medium-bg)
+  * Border Accent:                #FDE68A  (--risk-medium-border)
+  * Badge / Muted Fill:           #FEF3C7  (--risk-medium-muted)
+
+- HIGH RISK / STEP_UP_VERIFICATION ACTION:
+  * Primary Accent:               #EA580C  (--risk-high: vibrant orange)
+  * Background Surface:           #FFF7ED  (--risk-high-bg)
+  * Border Accent:                #FED7AA  (--risk-high-border)
+  * Badge / Muted Fill:           #FFEDD5  (--risk-high-muted)
+
+- CRITICAL RISK / BLOCK ACTION:
+  * Primary Accent:               #DC2626  (--risk-critical: crimson red)
+  * Background Surface:           #FEF2F2  (--risk-critical-bg)
+  * Border Accent:                #FECACA  (--risk-critical-border)
+  * Badge / Muted Fill:           #FEE2E2  (--risk-critical-muted)
+
+6. SYSTEM STATUS & GAUGES
+--------------------------------------------------------------------------------
+- Status OK Indicator:            #4ADE80  (bright green with 0 0 6px glow)
+- Status Degraded Indicator:      #F87171  (soft red)
+- Gauge Ring Track:               #EEF0F4  (inset neutral gray)
+- SHAP Feature Risk Increase:     #EA580C  (orange-red bar fill)
+- SHAP Feature Risk Decrease:     #16A34A  (green bar fill)
+- SHAP Feature Midline:           #C4CAD6  (neutral midpoint)
+
+7. POWERPOINT SLIDE PALETTE APPLICATION MAPPING
+--------------------------------------------------------------------------------
+- Presentation Aspect Ratio:      16:9 Widescreen (13.333" x 7.5")
+- Slide Background Default:       #F0F2F5 (Matches app body background)
+- Slide Background Hero / Dark:   #0F1624 (Matches app header and dark shell)
+- Content Card Background:        #FFFFFF (Matches app panel surface)
+- Card Border:                    #DDE1EA (1pt solid border)
+- Header Bar / Top Accent:        #0F1624 or #2563EB accent trim
+- Primary Title Typography:       #0F1624 (Dark slides: #FFFFFF)
+- Section & Label Typography:     #8492A6 / #2563EB (Uppercase bold tracking)
+- Body Typography:                #4A5568 (Dark slides: #C4CAD6)
+================================================================================

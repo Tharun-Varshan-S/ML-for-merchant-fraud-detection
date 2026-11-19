@@ -112,9 +112,19 @@ export default function App() {
       {/* ── Header ───────────────────────────────────────────────── */}
       <header className="app-header">
         <div className="header-brand">
-          <div className="app-title">MerchantShield AI</div>
-          <div className="app-tagline">Fraud risk decision support</div>
+          <div className="brand-badge-row">
+            <div className="razorpay-logo-badge" title="Razorpay">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="#0C83FE">
+                <path d="M22.436 0l-11.91 7.773-1.174 4.276 6.625-4.297L11.65 24h4.391l6.395-24zM14.26 10.098L3.389 17.166 1.564 24h9.008l3.688-13.902Z"/>
+              </svg>
+              <span className="razorpay-wordmark">Razorpay</span>
+            </div>
+            <span className="brand-separator">/</span>
+            <div className="app-title">MerchantShield AI</div>
+          </div>
+          <div className="app-tagline">Autonomous Fraud Decision Support &amp; Policy Enforcement</div>
           <div className="app-event-badge" aria-label="Razorpay AI Buildathon 2026, Track 02">
+            <span className="badge-glow-dot"></span>
             Razorpay AI Buildathon 2026 · Track 02 · DEMO MODE
           </div>
         </div>

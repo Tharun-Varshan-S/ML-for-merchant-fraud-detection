@@ -13,20 +13,40 @@
 // them through the real, frozen model -- but this file itself contains no model
 // logic; it is static request payloads only.
 
-function buildPriorHistory(customerId, { n = 8, device = "dev_known", geo = "region_03", amount = 520 } = {}) {
-  return Array.from({ length: n }, (_, i) => ({
-    transaction_id: `demo_ctx_${customerId}_${i}`,
-    customer_id: customerId,
-    merchant_id: "merch_demo_001",
-    merchant_category: "electronics",
-    timestamp: `2026-05-${String(10 + i).padStart(2, "0")}T10:00:00Z`,
-    amount: amount + i * 5,
-    device_id: device,
-    geo_region: geo,
-    payment_method: "card",
-    status: "success",
-    account_created: "2024-01-01T00:00:00Z",
-  }));
+export function buildPriorHistory(customerId, { n = 8, device = "dev_known", geo = "region_03", amount = 520, beforeTime } = {}) {
+  if (!beforeTime) {
+    return Array.from({ length: n }, (_, i) => ({
+      transaction_id: `demo_ctx_${customerId}_${i}`,
+      customer_id: customerId,
+      merchant_id: "merch_demo_001",
+      merchant_category: "electronics",
+      timestamp: `2026-05-${String(10 + i).padStart(2, "0")}T10:00:00Z`,
+      amount: amount + i * 5,
+      device_id: device,
+      geo_region: geo,
+      payment_method: "card",
+      status: "success",
+      account_created: "2024-01-01T00:00:00Z",
+    }));
+  }
+  const baseTime = new Date(beforeTime).getTime();
+  return Array.from({ length: n }, (_, i) => {
+    const daysAgo = (n - i);
+    const txnDate = new Date(baseTime - daysAgo * 24 * 60 * 60 * 1000);
+    return {
+      transaction_id: `hist_${customerId || "cust"}_${i}`,
+      customer_id: customerId || "cust_demo",
+      merchant_id: "merch_demo_001",
+      merchant_category: "electronics",
+      timestamp: txnDate.toISOString(),
+      amount: amount + (i % 3) * 15,
+      device_id: device,
+      geo_region: geo,
+      payment_method: "card",
+      status: "success",
+      account_created: "2024-01-01T00:00:00Z",
+    };
+  });
 }
 
 function buildScenario({ id, label, tierHint, description, customerId, amount, device, geo, timestamp }) {
@@ -91,18 +111,20 @@ export const DEMO_SCENARIOS = [
 ];
 
 export function emptyTransactionDraft() {
-  const now = new Date().toISOString().slice(0, 16); // yyyy-MM-ddTHH:mm for <input type=datetime-local>
+  const now = new Date();
+  const nowStr = now.toISOString().slice(0, 16);
+  const sixMonthsAgo = new Date(now.getTime() - 180 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16);
   return {
     transaction_id: "",
     customer_id: "",
     merchant_id: "",
     merchant_category: "electronics",
-    timestamp: now,
+    timestamp: nowStr,
     amount: "",
     device_id: "",
     geo_region: "",
     payment_method: "card",
     status: "success",
-    account_created: "",
+    account_created: sixMonthsAgo,
   };
 }

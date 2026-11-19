@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { DEMO_SCENARIOS, emptyTransactionDraft } from "../data/sampleScenarios";
+import { DEMO_SCENARIOS, emptyTransactionDraft, buildPriorHistory } from "../data/sampleScenarios";
 
 const STATUS_OPTIONS  = ["success", "failed"];
 const PAYMENT_METHODS = ["card", "upi", "netbanking", "wallet"];
@@ -31,6 +31,7 @@ export default function TransactionForm({ onSubmit, isSubmitting }) {
   const [selectedId, setSelectedId] = useState(null);
   const [draft, setDraft]         = useState(emptyTransactionDraft());
   const [formError, setFormError] = useState(null);
+  const [historyMode, setHistoryMode] = useState("existing");
 
   function updateDraft(field, value) {
     setDraft(d => ({ ...d, [field]: value }));
@@ -77,9 +78,19 @@ export default function TransactionForm({ onSubmit, isSubmitting }) {
       timestamp:       new Date(draft.timestamp).toISOString(),
       account_created: new Date(draft.account_created).toISOString(),
     };
-    // No prior_transactions in manual mode — scores as first-ever observed
-    // transaction (documented, correct behavior per docs/api.md).
-    onSubmit({ transaction, prior_transactions: [], source: "manual" });
+
+    let priorTransactions = [];
+    if (historyMode === "existing") {
+      priorTransactions = buildPriorHistory(draft.customer_id.trim() || "cust_demo", {
+        n: 8,
+        device: "dev_known",
+        geo: "region_03",
+        amount: 500,
+        beforeTime: transaction.timestamp,
+      });
+    }
+
+    onSubmit({ transaction, prior_transactions: priorTransactions, source: "manual" });
   }
 
   return (
@@ -152,9 +163,38 @@ export default function TransactionForm({ onSubmit, isSubmitting }) {
         {/* ── Manual entry form ─────────────────────────────── */}
         {mode === "manual" && (
           <form onSubmit={handleManualSubmit} aria-label="Manual transaction entry">
-            <p className="field-hint" style={{ marginBottom: 12 }}>
-              Scored as this customer's first observed transaction (no prior history supplied).
-            </p>
+            <div className="profile-context-box">
+              <label className="profile-context-title">
+                Customer Profile Context
+              </label>
+              <div className="profile-context-options">
+                <label className="profile-radio-label">
+                  <input
+                    type="radio"
+                    name="historyMode"
+                    value="existing"
+                    checked={historyMode === "existing"}
+                    onChange={() => setHistoryMode("existing")}
+                  />
+                  <span><strong>Existing Customer</strong> (Standard Baseline)</span>
+                </label>
+                <label className="profile-radio-label">
+                  <input
+                    type="radio"
+                    name="historyMode"
+                    value="cold"
+                    checked={historyMode === "cold"}
+                    onChange={() => setHistoryMode("cold")}
+                  />
+                  <span><strong>New Customer</strong> (Cold-Start / 0 History)</span>
+                </label>
+              </div>
+              <p className="field-hint" style={{ marginTop: 6, marginBottom: 0 }}>
+                {historyMode === "existing"
+                  ? "Compares against customer baseline (~₹500 avg spend on dev_known in region_03) to detect spikes, new devices, and unusual locations dynamically."
+                  : "Scored as a brand new customer's first-ever transaction (no prior baseline)."}
+              </p>
+            </div>
 
             {formError && (
               <div className="error-banner" role="alert" aria-live="assertive">
